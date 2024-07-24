@@ -51,7 +51,7 @@ impl ChessBoardPieces {
 impl ChessBoard {
     #[inline]
     pub fn get_occupancy(&self) -> Bitboard {
-        self.get_occupancy_for_side(Side::WHITE) & self.get_occupancy_for_side(Side::BLACK)
+        self.get_occupancy_for_side(Side::WHITE) | self.get_occupancy_for_side(Side::BLACK)
     }
 
     #[inline]

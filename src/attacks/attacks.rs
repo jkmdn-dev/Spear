@@ -32,31 +32,17 @@ impl Attacks {
 
 impl ChessBoard {
     pub fn all_attackers_to_square(&self, occupancy: Bitboard, square: Square, attacker_side: Side) -> Bitboard {
-        let queens = self.get_piece_mask_for_side(Piece::QUEEN, attacker_side);
-        (Attacks::get_bishop_attacks_for_square(square, occupancy)
-            & (self.get_piece_mask_for_side(Piece::BISHOP, attacker_side) | queens))
-            | (Attacks::get_knight_attacks_for_square(square) & self.get_piece_mask_for_side(Piece::KNIGHT, attacker_side))
-            | (Attacks::get_rook_attacks_for_square(square, occupancy)
-                & (self.get_piece_mask_for_side(Piece::ROOK, attacker_side) | queens))
-            | (Attacks::get_pawn_attacks_for_square(square, self.side_to_move())
-                & self.get_piece_mask_for_side(Piece::PAWN, attacker_side))
-            | (Attacks::get_king_attacks_for_square(square) & self.get_piece_mask_for_side(Piece::KING, attacker_side))
+        let queens = self.get_piece_mask(Piece::QUEEN);
+        ((Attacks::get_knight_attacks_for_square(square) & self.get_piece_mask(Piece::KNIGHT))
+        | (Attacks::get_king_attacks_for_square(square) & self.get_piece_mask(Piece::KING))
+        | (Attacks::get_pawn_attacks_for_square(square, attacker_side.flipped()) & self.get_piece_mask(Piece::PAWN))
+        | (Attacks::get_rook_attacks_for_square(square, occupancy) & (self.get_piece_mask(Piece::ROOK) | queens))
+        | (Attacks::get_bishop_attacks_for_square(square, occupancy) & (self.get_piece_mask(Piece::BISHOP) | queens)))
+        & self.get_occupancy_for_side(attacker_side)
     }
 
-    pub fn is_square_attacked_with_occupancy(&self, square: Square, attacker_side: Side, occupancy_mask: Bitboard) -> bool {
-        let bishop_queen_mask =
-            self.get_piece_mask_for_side(Piece::BISHOP, attacker_side) | self.get_piece_mask_for_side(Piece::QUEEN, attacker_side);
-        let rook_queen_mask =
-            self.get_piece_mask_for_side(Piece::ROOK, attacker_side) | self.get_piece_mask_for_side(Piece::QUEEN, attacker_side);
-
-        (Attacks::get_bishop_attacks_for_square(square, occupancy_mask) & bishop_queen_mask).is_not_empty()
-        || (Attacks::get_knight_attacks_for_square(square) & self.get_piece_mask_for_side(Piece::KNIGHT, attacker_side))
-            .is_not_empty()
-        || (Attacks::get_rook_attacks_for_square(square, occupancy_mask) & rook_queen_mask).is_not_empty()
-        || (Attacks::get_pawn_attacks_for_square(square, attacker_side.flipped())
-            & self.get_piece_mask_for_side(Piece::PAWN, attacker_side)).is_not_empty()
-        || (Attacks::get_king_attacks_for_square(square) & self.get_piece_mask_for_side(Piece::KING, attacker_side))
-            .is_not_empty()
+    pub fn is_square_attacked_with_occupancy(&self, square: Square, attacker_side: Side, occupancy: Bitboard) -> bool {
+        self.all_attackers_to_square(occupancy, square, attacker_side).is_not_empty()
     }
 
     #[inline]

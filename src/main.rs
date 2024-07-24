@@ -1,4 +1,4 @@
-use spear::{ChessBoard, Move, MoveFlag, Square, FEN};
+use spear::{ChessBoard, FEN};
 
 fn main() {
     let mut board = ChessBoard::from_fen(&FEN::kiwipete_position());
