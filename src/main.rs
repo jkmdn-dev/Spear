@@ -1,16 +1,18 @@
-mod base_structures;
-
-use std::time::Instant;
+use spear::{ChessBoard, Move, MoveFlag, Square, FEN};
 
 fn main() {
-    println!("Hello, world!");
+    let mut board = ChessBoard::from_fen(&FEN::kiwipete_position());
+    board.draw_board();
 
-    let mut t = Instant::now();
-    for _ in 0..1_000_000_000 {
-    }
-    println!("Map done in {}ms", t.elapsed().as_millis());
-    t = Instant::now();
-    for _ in 0..1_000_000_000 {
-    }
-    println!("Bare done in {}ms", t.elapsed().as_millis());
+    let mv = Move::from_squares( Square::from_string("g2"), Square::from_string("g4"), MoveFlag::DOUBLE_PUSH );
+    board.make_move(mv);
+    board.draw_board();
+
+    let mv = Move::from_squares( Square::from_string("h8"), Square::from_string("g8"), MoveFlag::QUIET_MOVE );
+    board.make_move(mv);
+    board.draw_board();
+
+    let mv = Move::from_squares( Square::from_string("e1"), Square::from_string("g1"), MoveFlag::KING_SIDE_CASTLE );
+    board.make_move(mv);
+    board.draw_board();
 }

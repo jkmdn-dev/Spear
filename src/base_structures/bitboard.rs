@@ -3,7 +3,7 @@ use std::{fmt::{Display, Formatter, Result}, ops::{BitAnd, BitAndAssign, BitOr, 
 
 use super::square::Square;
 
-#[derive(Copy, Clone, PartialEq, PartialOrd)]
+#[derive(Copy, Clone, Default, PartialEq, PartialOrd)]
 pub struct Bitboard(u64);
 impl Bitboard {
     pub const RANK_1: Self = Self::from_raw(0x00000000000000FF);
@@ -23,6 +23,9 @@ impl Bitboard {
     pub const FILE_F: Self = Self::from_raw(0x2020202020202020);
     pub const FILE_G: Self = Self::from_raw(0x4040404040404040);
     pub const FILE_H: Self = Self::from_raw(0x8080808080808080);
+
+    pub const FILES_AB: Self = Self::from_raw(0x0303030303030303);
+    pub const FILES_GH: Self = Self::from_raw(0xC0C0C0C0C0C0C0C0);
 
     pub const FULL: Self = Self::from_raw(0xFFFFFFFFFFFFFFFF);
     pub const EMPTY: Self = Self::from_raw(0);
@@ -44,17 +47,17 @@ impl Bitboard {
 
     #[inline]
     pub const fn ls1b_square(&self) -> Square {
-        Square::from_raw(self.get_value().trailing_zeros() as usize)
+        Square::from_raw(self.get_value().trailing_zeros() as u8)
     }
 
     #[inline]
     pub fn set_bit(&mut self, square: Square) {
-        self.mut_or(square.get_bit())
+        self.0 |= square.get_bit();
     }
 
     #[inline]
     pub fn pop_bit(&mut self, square: Square) {
-        self.mut_and(square.get_bit().inverse())
+        self.0 &= !square.get_bit()
     }
 
     #[inline]
@@ -128,7 +131,7 @@ impl Bitboard {
 
     #[inline]
     pub const fn inverse(&self) -> Self {
-        Self { 0: !self.get_value() }
+        Self(!self.get_value())
     }
 
     #[inline]
