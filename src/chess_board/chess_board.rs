@@ -1,24 +1,30 @@
 use colored::Colorize;
 
-use crate::{base_structures::{Side, ZobristKey}, CastleRight, Piece, Square, FEN};
+use crate::{
+    base_structures::{Side, ZobristKey},
+    CastleRight, Piece, Square, FEN,
+};
 
-use super::{chess_board_masks::ChessBoardMasks, chess_board_pieces::ChessBoardPieces, chess_board_state::ChessBoardState};
+use super::{
+    chess_board_masks::ChessBoardMasks, chess_board_pieces::ChessBoardPieces,
+    chess_board_state::ChessBoardState,
+};
 
 #[derive(Clone, Copy)]
 pub struct ChessBoard {
     pub(super) pieces: ChessBoardPieces,
     pub(super) masks: ChessBoardMasks,
     pub(super) state: ChessBoardState,
-    pub(crate) move_history: [ZobristKey; 100]
+    pub(crate) move_history: [ZobristKey; 100],
 }
 
 impl ChessBoard {
-    pub fn from_fen(fen: &FEN) -> Self{
+    pub fn from_fen(fen: &FEN) -> Self {
         let mut board = Self {
             pieces: ChessBoardPieces::default(),
             masks: ChessBoardMasks::default(),
             state: ChessBoardState::default(),
-            move_history: [ZobristKey::default(); 100]
+            move_history: [ZobristKey::default(); 100],
         };
 
         for (rank_index, rank) in fen.board.clone().into_iter().enumerate() {
@@ -71,26 +77,49 @@ impl ChessBoard {
                 pieces: ChessBoardPieces::default(),
                 masks: ChessBoardMasks::default(),
                 state: ChessBoardState::default(),
-                move_history: [ZobristKey::default(); 100]
+                move_history: [ZobristKey::default(); 100],
             };
         }
 
-
         if fen.castle_rights.contains('K') {
-            board.state.get_castle_rights_mut().set_right(CastleRight::WHITE_KING);
-            board.state.get_key_mut().update_castle_rights_hash(CastleRight::WHITE_KING);
+            board
+                .state
+                .get_castle_rights_mut()
+                .set_right(CastleRight::WHITE_KING);
+            board
+                .state
+                .get_key_mut()
+                .update_castle_rights_hash(CastleRight::WHITE_KING);
         }
         if fen.castle_rights.contains('Q') {
-            board.state.get_castle_rights_mut().set_right(CastleRight::WHITE_QUEEN);
-            board.state.get_key_mut().update_castle_rights_hash(CastleRight::WHITE_QUEEN);
+            board
+                .state
+                .get_castle_rights_mut()
+                .set_right(CastleRight::WHITE_QUEEN);
+            board
+                .state
+                .get_key_mut()
+                .update_castle_rights_hash(CastleRight::WHITE_QUEEN);
         }
         if fen.castle_rights.contains('k') {
-            board.state.get_castle_rights_mut().set_right(CastleRight::BLACK_KING);
-            board.state.get_key_mut().update_castle_rights_hash(CastleRight::BLACK_KING);
+            board
+                .state
+                .get_castle_rights_mut()
+                .set_right(CastleRight::BLACK_KING);
+            board
+                .state
+                .get_key_mut()
+                .update_castle_rights_hash(CastleRight::BLACK_KING);
         }
         if fen.castle_rights.contains('q') {
-            board.state.get_castle_rights_mut().set_right(CastleRight::BLACK_QUEEN);
-            board.state.get_key_mut().update_castle_rights_hash(CastleRight::BLACK_QUEEN);
+            board
+                .state
+                .get_castle_rights_mut()
+                .set_right(CastleRight::BLACK_QUEEN);
+            board
+                .state
+                .get_key_mut()
+                .update_castle_rights_hash(CastleRight::BLACK_QUEEN);
         }
 
         *board.state.get_en_passant_mut() = Square::NULL;
@@ -193,8 +222,10 @@ impl ChessBoard {
     }
 
     pub fn draw_board(&self) {
-        let piece_icons: [[&str; 6]; 2] =
-        [[" P ", " N ", " B ", " R ", " Q ", " K "], [" p ", " n ", " b ", " r ", " q ", " k "]];
+        let piece_icons: [[&str; 6]; 2] = [
+            [" P ", " N ", " B ", " R ", " Q ", " K "],
+            [" p ", " n ", " b ", " r ", " q ", " k "],
+        ];
 
         let mut info = Vec::new();
         let fen = format!("FEN: {}", self.get_fen());
@@ -230,11 +261,15 @@ impl ChessBoard {
                 if piece_type == Piece::NONE {
                     result += " . ";
                 } else if piece_side == Side::BLACK {
-                    result +=
-                        piece_icons[usize::from(Side::BLACK)][usize::from(piece_type)].blue().to_string().as_str();
+                    result += piece_icons[usize::from(Side::BLACK)][usize::from(piece_type)]
+                        .blue()
+                        .to_string()
+                        .as_str();
                 } else {
-                    result +=
-                        piece_icons[usize::from(Side::WHITE)][usize::from(piece_type)].yellow().to_string().as_str();
+                    result += piece_icons[usize::from(Side::WHITE)][usize::from(piece_type)]
+                        .yellow()
+                        .to_string()
+                        .as_str();
                 }
             }
             result += format!("| {}", info[(7 - rank) as usize]).as_str();
@@ -243,4 +278,4 @@ impl ChessBoard {
         result += " ------------------------\n".to_string().as_str();
         print!("{}\n", result);
     }
-} 
+}

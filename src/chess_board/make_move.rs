@@ -27,14 +27,19 @@ impl ChessBoard {
         }
 
         let mut castle_rights = self.castle_rights().get_value();
-        castle_rights &= !(CastleRight::ROOK_MASKS[from_square.get_value() as usize] | CastleRight::ROOK_MASKS[to_square.get_value() as usize]);
+        castle_rights &= !(CastleRight::ROOK_MASKS[from_square.get_value() as usize]
+            | CastleRight::ROOK_MASKS[to_square.get_value() as usize]);
         let castle_rights_difference = self.castle_rights().get_value() ^ castle_rights;
-        self.state.get_key_mut().update_castle_rights_diff_hash(castle_rights_difference);
+        self.state
+            .get_key_mut()
+            .update_castle_rights_diff_hash(castle_rights_difference);
         *self.state.get_castle_rights_mut() = CastleRight::from_raw(castle_rights);
 
         let en_passant_square = self.en_passant_square();
         if en_passant_square != Square::NULL {
-            self.state.get_key_mut().update_en_passant_hash(en_passant_square);
+            self.state
+                .get_key_mut()
+                .update_en_passant_hash(en_passant_square);
         }
 
         *self.state.get_en_passant_mut() = Square::NULL;
@@ -43,17 +48,31 @@ impl ChessBoard {
         match flag {
             MoveFlag::DOUBLE_PUSH => {
                 *self.state.get_en_passant_mut() = to_square ^ 8;
-                self.state.get_key_mut().update_en_passant_hash(to_square ^ 8);
-            },
+                self.state
+                    .get_key_mut()
+                    .update_en_passant_hash(to_square ^ 8);
+            }
             MoveFlag::KING_SIDE_CASTLE | MoveFlag::QUEEN_SIDE_CASTLE => {
                 let king_side = usize::from(flag == MoveFlag::KING_SIDE_CASTLE);
                 let side_flip = 56 * side_to_move;
                 let rook_from_square = side_flip + CastleRight::ROOK_POSITIONS[king_side];
                 let rook_to_square = side_flip + [3, 5][king_side];
-                self.remove_piece_on_square(Square::from_raw(rook_from_square), self.side_to_move(), Piece::ROOK);
-                self.set_piece_on_square(Square::from_raw(rook_to_square), self.side_to_move(), Piece::ROOK);
+                self.remove_piece_on_square(
+                    Square::from_raw(rook_from_square),
+                    self.side_to_move(),
+                    Piece::ROOK,
+                );
+                self.set_piece_on_square(
+                    Square::from_raw(rook_to_square),
+                    self.side_to_move(),
+                    Piece::ROOK,
+                );
             }
-            MoveFlag::EN_PASSANT => self.remove_piece_on_square(to_square ^ 8, self.side_to_move().flipped(), Piece::PAWN),
+            MoveFlag::EN_PASSANT => self.remove_piece_on_square(
+                to_square ^ 8,
+                self.side_to_move().flipped(),
+                Piece::PAWN,
+            ),
             MoveFlag::KNIGHT_PROMOTION.. => {
                 let promotion_piece = mv.get_promotion_piece();
                 self.remove_piece_on_square(to_square, self.side_to_move(), Piece::PAWN);
@@ -61,7 +80,6 @@ impl ChessBoard {
             }
             _ => {}
         }
-
 
         self.state.get_side_to_move_mut().mut_flip();
         self.state.get_key_mut().update_side_to_move_hash();

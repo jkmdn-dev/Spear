@@ -1,10 +1,10 @@
 mod attacks;
+mod bishop_attacks;
 mod king_attacks;
 mod knight_attacks;
 mod pawn_attacks;
-mod bishop_attacks;
-mod rook_attacks;
 mod rays;
+mod rook_attacks;
 
 #[allow(unused)]
 pub use attacks::Attacks;

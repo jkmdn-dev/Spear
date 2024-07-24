@@ -6,7 +6,7 @@ use super::{CastleRight, Side};
 
 #[derive(Copy, Clone, Default, PartialEq)]
 pub struct ZobristKey(u64);
-impl ZobristKey{
+impl ZobristKey {
     pub const NULL: Self = Self(0);
 
     #[inline]

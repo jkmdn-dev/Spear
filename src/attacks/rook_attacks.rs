@@ -49,10 +49,12 @@ static ROOK_ATTACKS: Lazy<Vec<Vec<Bitboard>>> = Lazy::new(|| {
         let mut index = 0;
         while index < 1 << relevant_bit_count {
             let occupancy = generate_occupancy(index, relevant_bit_count as usize, attack_mask);
-            let magic_index: u64 = (occupancy.wrapping_mul(MAGIC_NUMBERS_ROOK[square_index as usize].into())
+            let magic_index: u64 = (occupancy
+                .wrapping_mul(MAGIC_NUMBERS_ROOK[square_index as usize].into())
                 >> (64 - relevant_bit_count))
                 .into();
-            result[square_index as usize][magic_index as usize] = generate_rook_attacks(square, occupancy);
+            result[square_index as usize][magic_index as usize] =
+                generate_rook_attacks(square, occupancy);
             index += 1;
         }
     }
@@ -67,28 +69,36 @@ const fn mask_rook_attacks(square: Square) -> Bitboard {
     let mut rank = rook_position.0 + 1;
     let mut file = rook_position.1;
     while rank < 7 {
-        result |= Square::from_coords(rank as u8, file as u8).get_bit().get_value();
+        result |= Square::from_coords(rank as u8, file as u8)
+            .get_bit()
+            .get_value();
         rank += 1;
     }
 
     rank = rook_position.0 - 1;
     file = rook_position.1;
     while rank > 0 {
-        result |= Square::from_coords(rank as u8, file as u8).get_bit().get_value();
+        result |= Square::from_coords(rank as u8, file as u8)
+            .get_bit()
+            .get_value();
         rank -= 1;
     }
 
     rank = rook_position.0;
     file = rook_position.1 + 1;
     while file < 7 {
-        result |= Square::from_coords(rank as u8, file as u8).get_bit().get_value();
+        result |= Square::from_coords(rank as u8, file as u8)
+            .get_bit()
+            .get_value();
         file += 1;
     }
 
     rank = rook_position.0;
     file = rook_position.1 - 1;
     while file > 0 {
-        result |= Square::from_coords(rank as u8, file as u8).get_bit().get_value();
+        result |= Square::from_coords(rank as u8, file as u8)
+            .get_bit()
+            .get_value();
         file -= 1;
     }
 

@@ -20,7 +20,9 @@ impl Move {
 
     #[inline]
     pub fn from_squares(from_square: Square, to_square: Square, flag: u16) -> Self {
-        Self::from_raw( (to_square.get_value() as u16) << 10 | flag << 6 | from_square.get_value() as u16)
+        Self::from_raw(
+            (to_square.get_value() as u16) << 10 | flag << 6 | from_square.get_value() as u16,
+        )
     }
 
     #[inline]
@@ -78,7 +80,7 @@ impl Move {
 }
 
 impl Display for Move {
-    fn fmt(&self, formatter: &mut Formatter<'_>) -> Result{
+    fn fmt(&self, formatter: &mut Formatter<'_>) -> Result {
         writeln!(formatter, "{}", self.to_string())
     }
 }

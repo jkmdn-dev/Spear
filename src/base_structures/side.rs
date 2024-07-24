@@ -32,7 +32,11 @@ impl Side {
     }
 
     pub fn to_string(&self) -> String {
-        if *self == Side::WHITE { "White".to_string() } else { "Black".to_string() }
+        if *self == Side::WHITE {
+            "White".to_string()
+        } else {
+            "Black".to_string()
+        }
     }
 }
 

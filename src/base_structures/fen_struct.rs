@@ -28,7 +28,7 @@ impl FEN {
     pub fn from_str(fen_string: &str) -> Self {
         let fen_parts: Vec<&str> = fen_string.split_whitespace().collect();
         let mut result: Self = Self::default();
-        let board_parts: Vec<&str>  = fen_parts[0].split('/').collect();
+        let board_parts: Vec<&str> = fen_parts[0].split('/').collect();
         for index in 0..8 {
             result.board[index] = board_parts[index].to_string()
         }
@@ -37,8 +37,18 @@ impl FEN {
         result.castle_rights = fen_parts[2].to_string();
         result.en_passant_square = fen_parts[3].to_string();
 
-        result.half_move_counter = if fen_parts.len() > 4 { fen_parts[4]} else { "0" }.to_string();
-        result.full_move_counter = if fen_parts.len() > 5 { fen_parts[5]} else { "1" }.to_string();
+        result.half_move_counter = if fen_parts.len() > 4 {
+            fen_parts[4]
+        } else {
+            "0"
+        }
+        .to_string();
+        result.full_move_counter = if fen_parts.len() > 5 {
+            fen_parts[5]
+        } else {
+            "1"
+        }
+        .to_string();
 
         result
     }
@@ -50,37 +60,41 @@ impl FEN {
             return false;
         }
 
-        let board_parts: Vec<&str>  = fen_parts[0].split('/').collect();
+        let board_parts: Vec<&str> = fen_parts[0].split('/').collect();
         if board_parts.len() != 8 {
             return false;
         }
 
-        if fen_parts[1] != "w" && fen_parts[1] != "b"  {
+        if fen_parts[1] != "w" && fen_parts[1] != "b" {
             return false;
         }
 
-        let castle_rights_contain = fen_parts[2].contains("-") 
-                                        || fen_parts[2].contains("K") 
-                                        || fen_parts[2].contains("Q") 
-                                        || fen_parts[2].contains("k") 
-                                        || fen_parts[2].contains("q");
-        if fen_parts[2].len() > 4 || !castle_rights_contain  {
+        let castle_rights_contain = fen_parts[2].contains("-")
+            || fen_parts[2].contains("K")
+            || fen_parts[2].contains("Q")
+            || fen_parts[2].contains("k")
+            || fen_parts[2].contains("q");
+        if fen_parts[2].len() > 4 || !castle_rights_contain {
             return false;
         }
 
-        let square_validate = if fen_parts[3] != "-" { Square::from_string(fen_parts[3]).get_value() < 63 } else {true};
+        let square_validate = if fen_parts[3] != "-" {
+            Square::from_string(fen_parts[3]).get_value() < 63
+        } else {
+            true
+        };
         if fen_parts[3].len() > 2 || !square_validate {
             return false;
         }
 
         if fen_parts.len() > 4 {
-            if let Err(_) = fen_parts[4].parse::<u8>()  {
+            if let Err(_) = fen_parts[4].parse::<u8>() {
                 return false;
             }
         }
 
         if fen_parts.len() > 5 {
-            if let Err(_) = fen_parts[5].parse::<u16>()  {
+            if let Err(_) = fen_parts[5].parse::<u16>() {
                 return false;
             }
         }
@@ -89,11 +103,22 @@ impl FEN {
     }
 
     pub fn to_string(&self) -> String {
-        format!("{}/{}/{}/{}/{}/{}/{}/{} {} {} {} {} {}",
-        self.board[0], self.board[1], self.board[2], self.board[3], 
-        self.board[4], self.board[5], self.board[6], self.board[7],
-        self.side_to_move, self.castle_rights, self.en_passant_square, 
-        self.half_move_counter, self.full_move_counter)
+        format!(
+            "{}/{}/{}/{}/{}/{}/{}/{} {} {} {} {} {}",
+            self.board[0],
+            self.board[1],
+            self.board[2],
+            self.board[3],
+            self.board[4],
+            self.board[5],
+            self.board[6],
+            self.board[7],
+            self.side_to_move,
+            self.castle_rights,
+            self.en_passant_square,
+            self.half_move_counter,
+            self.full_move_counter
+        )
     }
 }
 

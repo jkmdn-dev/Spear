@@ -16,7 +16,8 @@ const RAYS: [[Bitboard; 64]; 64] = {
         while to_square_index < 64 {
             let from_square = Square::from_raw(from_square_index);
             let to_square = Square::from_raw(to_square_index);
-            result[from_square_index as usize][to_square_index as usize] = generate_ray(from_square, to_square);
+            result[from_square_index as usize][to_square_index as usize] =
+                generate_ray(from_square, to_square);
             to_square_index += 1;
         }
         from_square_index += 1;

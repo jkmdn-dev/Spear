@@ -1,4 +1,7 @@
-use std::{fmt::{Display, Formatter, Result}, ops::{Add, BitXor}};
+use std::{
+    fmt::{Display, Formatter, Result},
+    ops::{Add, BitXor},
+};
 
 use super::bitboard::Bitboard;
 
@@ -118,7 +121,7 @@ impl Square {
 
     #[inline]
     pub const fn shift_right(&self, shift: i32) -> Self {
-        Self::from_raw(self.get_value() >> shift) 
+        Self::from_raw(self.get_value() >> shift)
     }
 
     pub fn to_string(&self) -> String {
@@ -155,7 +158,9 @@ impl Add<u8> for Square {
 
     #[inline]
     fn add(self, rhs: u8) -> Self::Output {
-        Self { 0: self.get_value() + rhs }
+        Self {
+            0: self.get_value() + rhs,
+        }
     }
 }
 impl Add<Square> for u8 {
@@ -163,7 +168,9 @@ impl Add<Square> for u8 {
 
     #[inline]
     fn add(self, rhs: Square) -> Self::Output {
-        Square { 0: self + rhs.get_value() }
+        Square {
+            0: self + rhs.get_value(),
+        }
     }
 }
 impl BitXor<u8> for Square {
@@ -177,6 +184,6 @@ impl BitXor<u8> for Square {
 
 impl Display for Square {
     fn fmt(&self, formatter: &mut Formatter<'_>) -> Result {
-        write!( formatter, "{}", self.to_string() )
+        write!(formatter, "{}", self.to_string())
     }
 }

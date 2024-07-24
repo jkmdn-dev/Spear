@@ -1,7 +1,5 @@
 use std::fmt::{Display, Formatter, Result};
 
-use super::Square;
-
 #[derive(Copy, Clone, Default, PartialEq)]
 pub struct CastleRight(u8);
 impl CastleRight {

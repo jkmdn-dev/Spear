@@ -1,5 +1,11 @@
 use colored::*;
-use std::{fmt::{Display, Formatter, Result}, ops::{BitAnd, BitAndAssign, BitOr, BitOrAssign, BitXor, BitXorAssign, Not, Shl, ShlAssign, Shr, ShrAssign}};
+use std::{
+    fmt::{Display, Formatter, Result},
+    ops::{
+        BitAnd, BitAndAssign, BitOr, BitOrAssign, BitXor, BitXorAssign, Not, Shl, ShlAssign, Shr,
+        ShrAssign,
+    },
+};
 
 use super::square::Square;
 
@@ -110,23 +116,29 @@ impl Bitboard {
     pub fn map<F: FnMut(Square)>(&self, mut method: F) {
         let mut bitboard_copy = Bitboard::from_raw(self.get_value());
         while bitboard_copy.is_not_empty() {
-            method( bitboard_copy.pop_ls1b_square() )
+            method(bitboard_copy.pop_ls1b_square())
         }
     }
 
     #[inline]
     pub const fn and(&self, rhs: Bitboard) -> Self {
-        Self { 0: self.get_value() & rhs.get_value() }
+        Self {
+            0: self.get_value() & rhs.get_value(),
+        }
     }
 
     #[inline]
     pub const fn or(&self, rhs: Bitboard) -> Self {
-        Self { 0: self.get_value() | rhs.get_value() }
+        Self {
+            0: self.get_value() | rhs.get_value(),
+        }
     }
 
     #[inline]
     pub const fn xor(&self, rhs: Bitboard) -> Self {
-        Self { 0: self.get_value() ^ rhs.get_value() }
+        Self {
+            0: self.get_value() ^ rhs.get_value(),
+        }
     }
 
     #[inline]
@@ -136,7 +148,9 @@ impl Bitboard {
 
     #[inline]
     pub const fn flip(&self) -> Self {
-        Self { 0: self.get_value().swap_bytes() }
+        Self {
+            0: self.get_value().swap_bytes(),
+        }
     }
 
     #[inline]
@@ -151,17 +165,23 @@ impl Bitboard {
 
     #[inline]
     pub const fn shift_left(self, rhs: u32) -> Self {
-        Self { 0: self.get_value() << rhs }
+        Self {
+            0: self.get_value() << rhs,
+        }
     }
 
     #[inline]
     pub const fn shift_right(self, rhs: u32) -> Self {
-        Self { 0: self.get_value() >> rhs }
+        Self {
+            0: self.get_value() >> rhs,
+        }
     }
 
     #[inline]
     pub const fn wrapping_mul(self, rhs: Bitboard) -> Self {
-        Self { 0: self.get_value().wrapping_mul(rhs.get_value()) }
+        Self {
+            0: self.get_value().wrapping_mul(rhs.get_value()),
+        }
     }
 
     pub fn draw_bitboard(&self) {
@@ -174,7 +194,13 @@ impl Bitboard {
             result += "|";
             for file in 0..8 {
                 let square = Square::from_coords(rank, file);
-                result += if self.get_bit(square) { " 1 ".green() } else { " 0 ".red() }.to_string().as_str();
+                result += if self.get_bit(square) {
+                    " 1 ".green()
+                } else {
+                    " 0 ".red()
+                }
+                .to_string()
+                .as_str();
             }
             result += "|\n";
         }
@@ -385,6 +411,6 @@ impl ShrAssign<u32> for Bitboard {
 
 impl Display for Bitboard {
     fn fmt(&self, formatter: &mut Formatter<'_>) -> Result {
-        write!( formatter, "{}\n", self.get_bitboard_string() )
+        write!(formatter, "{}\n", self.get_bitboard_string())
     }
 }

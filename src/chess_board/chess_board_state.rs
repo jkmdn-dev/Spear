@@ -1,4 +1,7 @@
-use crate::{base_structures::{Side, ZobristKey}, CastleRight, ChessBoard, Piece, Square};
+use crate::{
+    base_structures::{Side, ZobristKey},
+    CastleRight, ChessBoard, Piece, Square,
+};
 
 #[derive(Clone, Copy, Default)]
 pub struct ChessBoardState {
@@ -25,7 +28,6 @@ impl ChessBoardState {
     pub(super) fn get_en_passant_mut(&mut self) -> &mut Square {
         &mut self.en_passant
     }
-
 
     #[inline]
     pub(super) fn get_castle_rights_mut(&mut self) -> &mut CastleRight {
@@ -67,7 +69,8 @@ impl ChessBoard {
     #[inline]
     pub fn is_insufficient_material(&self) -> bool {
         let pawns = self.get_piece_mask(Piece::PAWN).is_empty();
-        let major_pieces = (self.get_piece_mask(Piece::ROOK) | self.get_piece_mask(Piece::QUEEN)).is_empty();
+        let major_pieces =
+            (self.get_piece_mask(Piece::ROOK) | self.get_piece_mask(Piece::QUEEN)).is_empty();
         let white_minor_pieces = (self.get_piece_mask_for_side(Piece::KNIGHT, Side::WHITE)
             | self.get_piece_mask_for_side(Piece::BISHOP, Side::WHITE))
         .pop_count()

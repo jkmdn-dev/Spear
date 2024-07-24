@@ -18,7 +18,7 @@ impl Piece {
 
     #[inline]
     pub const fn get_value(&self) -> u8 {
-        self.0  
+        self.0
     }
 
     pub fn to_char(&self) -> char {
@@ -29,7 +29,7 @@ impl Piece {
             Piece::ROOK => 'r',
             Piece::QUEEN => 'q',
             Piece::KING => 'k',
-            _ => ' '
+            _ => ' ',
         }
     }
 }
