@@ -13,44 +13,44 @@ impl KingAttacks {
                 .and(bb.shift_left(7))
                 .is_not_empty()
             {
-                attack_map |= bb.shift_left(7).get_value()
+                attack_map |= bb.shift_left(7).get_raw()
             }
-            attack_map |= bb.shift_left(8).get_value();
+            attack_map |= bb.shift_left(8).get_raw();
             if Bitboard::FILE_A
                 .inverse()
                 .and(bb.shift_left(9))
                 .is_not_empty()
             {
-                attack_map |= bb.shift_left(9).get_value()
+                attack_map |= bb.shift_left(9).get_raw()
             }
             if Bitboard::FILE_A
                 .inverse()
                 .and(bb.shift_right(7))
                 .is_not_empty()
             {
-                attack_map |= bb.shift_right(7).get_value()
+                attack_map |= bb.shift_right(7).get_raw()
             }
-            attack_map |= bb.shift_right(8).get_value();
+            attack_map |= bb.shift_right(8).get_raw();
             if Bitboard::FILE_H
                 .inverse()
                 .and(bb.shift_right(9))
                 .is_not_empty()
             {
-                attack_map |= bb.shift_right(9).get_value()
+                attack_map |= bb.shift_right(9).get_raw()
             }
             if Bitboard::FILE_A
                 .inverse()
                 .and(bb.shift_left(1))
                 .is_not_empty()
             {
-                attack_map |= bb.shift_left(1).get_value()
+                attack_map |= bb.shift_left(1).get_raw()
             }
             if Bitboard::FILE_H
                 .inverse()
                 .and(bb.shift_right(1))
                 .is_not_empty()
             {
-                attack_map |= bb.shift_right(1).get_value()
+                attack_map |= bb.shift_right(1).get_raw()
             }
             result[square_index] = Bitboard::from_raw(attack_map);
             square_index += 1;

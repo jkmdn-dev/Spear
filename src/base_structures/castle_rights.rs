@@ -33,6 +33,7 @@ impl CastleRight {
     }
 
     #[inline]
+    #[allow(unused)]
     pub(crate) fn remove_right(&mut self, right: CastleRight) {
         self.0 &= !right.0
     }
@@ -43,7 +44,7 @@ impl CastleRight {
     }
 
     #[inline]
-    pub fn get_value(&self) -> u8 {
+    pub fn get_raw(&self) -> u8 {
         self.0
     }
 
@@ -81,12 +82,12 @@ impl Display for CastleRight {
 
 impl From<CastleRight> for u8 {
     fn from(castle_right: CastleRight) -> Self {
-        castle_right.get_value()
+        castle_right.get_raw()
     }
 }
 
 impl From<CastleRight> for usize {
     fn from(castile_right: CastleRight) -> Self {
-        castile_right.get_value() as usize
+        castile_right.get_raw() as usize
     }
 }

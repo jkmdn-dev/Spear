@@ -79,7 +79,7 @@ impl FEN {
         }
 
         let square_validate = if fen_parts[3] != "-" {
-            Square::from_string(fen_parts[3]).get_value() < 63
+            Square::from_string(fen_parts[3]).get_raw() < 63
         } else {
             true
         };

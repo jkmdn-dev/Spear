@@ -21,12 +21,12 @@ impl Move {
     #[inline]
     pub fn from_squares(from_square: Square, to_square: Square, flag: u16) -> Self {
         Self::from_raw(
-            (to_square.get_value() as u16) << 10 | flag << 6 | from_square.get_value() as u16,
+            (to_square.get_raw() as u16) << 10 | flag << 6 | from_square.get_raw() as u16,
         )
     }
 
     #[inline]
-    pub fn get_value(&self) -> u16 {
+    pub fn get_raw(&self) -> u16 {
         self.0
     }
 
@@ -71,7 +71,7 @@ impl Move {
             self.get_from_square().to_string(),
             self.get_to_square().to_string(),
             if self.is_promotion() {
-                ["n", "b", "r", "q"][(self.get_promotion_piece().get_value() - 1) as usize]
+                ["n", "b", "r", "q"][(self.get_promotion_piece().get_raw() - 1) as usize]
             } else {
                 ""
             }
@@ -81,6 +81,6 @@ impl Move {
 
 impl Display for Move {
     fn fmt(&self, formatter: &mut Formatter<'_>) -> Result {
-        writeln!(formatter, "{}", self.to_string())
+        write!(formatter, "{}", self.to_string())
     }
 }

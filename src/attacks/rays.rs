@@ -4,7 +4,7 @@ pub struct Rays;
 impl Rays {
     #[inline]
     pub fn get_ray(from: Square, to: Square) -> Bitboard {
-        RAYS[from.get_value() as usize][to.get_value() as usize]
+        RAYS[from.get_raw() as usize][to.get_raw() as usize]
     }
 }
 
@@ -40,7 +40,7 @@ const fn generate_ray(from: Square, to: Square) -> Bitboard {
 
     while rank >= 0 && rank <= 7 && file >= 0 && file <= 7 {
         let current_square = Square::from_coords(rank as u8, file as u8);
-        result |= current_square.get_bit().get_value();
+        result |= current_square.get_bit().get_raw();
         if to.equals(current_square) {
             return Bitboard::from_raw(result);
         }

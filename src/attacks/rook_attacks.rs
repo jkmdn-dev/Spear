@@ -10,7 +10,7 @@ impl RookAttacks {
         occupancy &= ROOK_MASKS[square];
         occupancy = occupancy.wrapping_mul(MAGIC_NUMBERS_ROOK[square].into());
         occupancy >>= 64 - ROOK_OCCUPANCY_COUNT[square] as u32;
-        ROOK_ATTACKS[square][occupancy.get_value() as usize]
+        ROOK_ATTACKS[square][occupancy.get_raw() as usize]
     }
 }
 
@@ -31,7 +31,7 @@ const ROOK_OCCUPANCY_COUNT: [usize; 64] = {
         let mut file = 0;
         while file < 8 {
             let square = Square::from_coords(rank, file);
-            result[square.get_value() as usize] = mask_rook_attacks(square).pop_count() as usize;
+            result[square.get_raw() as usize] = mask_rook_attacks(square).pop_count() as usize;
             file += 1;
         }
         rank += 1;
@@ -71,7 +71,7 @@ const fn mask_rook_attacks(square: Square) -> Bitboard {
     while rank < 7 {
         result |= Square::from_coords(rank as u8, file as u8)
             .get_bit()
-            .get_value();
+            .get_raw();
         rank += 1;
     }
 
@@ -80,7 +80,7 @@ const fn mask_rook_attacks(square: Square) -> Bitboard {
     while rank > 0 {
         result |= Square::from_coords(rank as u8, file as u8)
             .get_bit()
-            .get_value();
+            .get_raw();
         rank -= 1;
     }
 
@@ -89,7 +89,7 @@ const fn mask_rook_attacks(square: Square) -> Bitboard {
     while file < 7 {
         result |= Square::from_coords(rank as u8, file as u8)
             .get_bit()
-            .get_value();
+            .get_raw();
         file += 1;
     }
 
@@ -98,7 +98,7 @@ const fn mask_rook_attacks(square: Square) -> Bitboard {
     while file > 0 {
         result |= Square::from_coords(rank as u8, file as u8)
             .get_bit()
-            .get_value();
+            .get_raw();
         file -= 1;
     }
 

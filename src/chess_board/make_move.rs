@@ -2,7 +2,7 @@ use crate::{base_structures::Move, CastleRight, ChessBoard, MoveFlag, Piece, Squ
 
 impl ChessBoard {
     pub fn make_move(&mut self, mv: Move) {
-        let side_to_move = self.side_to_move().get_value();
+        let side_to_move = self.side_to_move().get_raw();
         let from_square = mv.get_from_square();
         let to_square = mv.get_to_square();
         let moved_piece = self.get_piece_on_square(from_square);
@@ -26,10 +26,10 @@ impl ChessBoard {
             *self.state.get_half_move_counter_mut() += 1;
         }
 
-        let mut castle_rights = self.castle_rights().get_value();
-        castle_rights &= !(CastleRight::ROOK_MASKS[from_square.get_value() as usize]
-            | CastleRight::ROOK_MASKS[to_square.get_value() as usize]);
-        let castle_rights_difference = self.castle_rights().get_value() ^ castle_rights;
+        let mut castle_rights = self.castle_rights().get_raw();
+        castle_rights &= !(CastleRight::ROOK_MASKS[from_square.get_raw() as usize]
+            | CastleRight::ROOK_MASKS[to_square.get_raw() as usize]);
+        let castle_rights_difference = self.castle_rights().get_raw() ^ castle_rights;
         self.state
             .get_key_mut()
             .update_castle_rights_diff_hash(castle_rights_difference);

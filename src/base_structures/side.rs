@@ -12,7 +12,7 @@ impl Side {
     }
 
     #[inline]
-    pub const fn get_value(&self) -> u8 {
+    pub const fn get_raw(&self) -> u8 {
         self.0
     }
 
@@ -48,12 +48,12 @@ impl Display for Side {
 
 impl From<Side> for u8 {
     fn from(side: Side) -> Self {
-        side.get_value()
+        side.get_raw()
     }
 }
 
 impl From<Side> for usize {
     fn from(side: Side) -> Self {
-        side.get_value() as usize
+        side.get_raw() as usize
     }
 }

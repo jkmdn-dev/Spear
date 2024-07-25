@@ -9,17 +9,17 @@ pub struct Attacks;
 impl Attacks {
     #[inline]
     pub fn get_king_attacks_for_square(square: Square) -> Bitboard {
-        KingAttacks::ATTACK_TABLE[square.get_value() as usize]
+        KingAttacks::ATTACK_TABLE[square.get_raw() as usize]
     }
 
     #[inline]
     pub fn get_knight_attacks_for_square(square: Square) -> Bitboard {
-        KnightAttacks::ATTACK_TABLE[square.get_value() as usize]
+        KnightAttacks::ATTACK_TABLE[square.get_raw() as usize]
     }
 
     #[inline]
     pub fn get_pawn_attacks_for_square(square: Square, side: Side) -> Bitboard {
-        PawnsAttacks::ATTACK_TABLE[side.get_value() as usize][square.get_value() as usize]
+        PawnsAttacks::ATTACK_TABLE[side.get_raw() as usize][square.get_raw() as usize]
     }
 
     #[inline]

@@ -8,16 +8,16 @@ pub struct ChessBoardPieces {
 impl ChessBoardPieces {
     #[inline]
     pub fn get_occupancy_for_side(&self, side: Side) -> Bitboard {
-        self.occupancy[side.get_value() as usize]
+        self.occupancy[side.get_raw() as usize]
     }
 
     #[inline]
     pub fn get_piece_mask(&self, piece: Piece) -> Bitboard {
-        self.pieces[piece.get_value() as usize]
+        self.pieces[piece.get_raw() as usize]
     }
 
     pub fn get_piece_on_square(&self, square: Square) -> Piece {
-        for piece_index in Piece::PAWN.get_value()..=Piece::KING.get_value() {
+        for piece_index in Piece::PAWN.get_raw()..=Piece::KING.get_raw() {
             if self.pieces[usize::from(piece_index)].get_bit(square) {
                 return Piece::from_raw(piece_index);
             }
@@ -37,14 +37,14 @@ impl ChessBoardPieces {
 
     #[inline]
     pub fn set_piece_on_square(&mut self, square: Square, side: Side, piece: Piece) {
-        self.pieces[piece.get_value() as usize].set_bit(square);
-        self.occupancy[side.get_value() as usize].set_bit(square);
+        self.pieces[piece.get_raw() as usize].set_bit(square);
+        self.occupancy[side.get_raw() as usize].set_bit(square);
     }
 
     #[inline]
     pub fn remove_piece_on_square(&mut self, square: Square, side: Side, piece: Piece) {
-        self.pieces[piece.get_value() as usize].pop_bit(square);
-        self.occupancy[side.get_value() as usize].pop_bit(square);
+        self.pieces[piece.get_raw() as usize].pop_bit(square);
+        self.occupancy[side.get_raw() as usize].pop_bit(square);
     }
 }
 

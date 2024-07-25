@@ -3,7 +3,7 @@ use std::{
     fmt::{Display, Formatter, Result},
     ops::{
         BitAnd, BitAndAssign, BitOr, BitOrAssign, BitXor, BitXorAssign, Not, Shl, ShlAssign, Shr,
-        ShrAssign,
+        ShrAssign, Sub,
     },
 };
 
@@ -42,18 +42,18 @@ impl Bitboard {
     }
 
     #[inline]
-    pub const fn get_value(&self) -> u64 {
+    pub const fn get_raw(&self) -> u64 {
         self.0
     }
 
     #[inline]
     pub const fn pop_count(&self) -> u32 {
-        self.get_value().count_ones()
+        self.get_raw().count_ones()
     }
 
     #[inline]
     pub const fn ls1b_square(&self) -> Square {
-        Square::from_raw(self.get_value().trailing_zeros() as u8)
+        Square::from_raw(self.get_raw().trailing_zeros() as u8)
     }
 
     #[inline]
@@ -69,7 +69,7 @@ impl Bitboard {
     #[inline]
     pub fn pop_ls1b_square(&mut self) -> Square {
         let square = self.ls1b_square();
-        self.0 &= self.get_value() - 1;
+        self.0 &= self.get_raw() - 1;
         square
     }
 
@@ -80,41 +80,41 @@ impl Bitboard {
 
     #[inline]
     pub const fn is_empty(&self) -> bool {
-        self.get_value() == 0
+        self.get_raw() == 0
     }
 
     #[inline]
     pub const fn is_not_empty(&self) -> bool {
-        self.get_value() != 0
+        self.get_raw() != 0
     }
 
     #[inline]
     pub const fn equals(&self, rhs: Bitboard) -> bool {
-        self.get_value() == rhs.get_value()
+        self.get_raw() == rhs.get_raw()
     }
 
     #[inline]
     pub const fn only_one_bit(&self) -> bool {
-        !self.is_empty() && (self.get_value() & self.get_value().wrapping_sub(1)) == 0
+        !self.is_empty() && (self.get_raw() & self.get_raw().wrapping_sub(1)) == 0
     }
 
     #[inline]
     pub const fn multiple_one_bits(&self) -> bool {
-        !self.is_empty() && (self.get_value() & self.get_value().wrapping_sub(1)) != 0
+        !self.is_empty() && (self.get_raw() & self.get_raw().wrapping_sub(1)) != 0
     }
 
     #[inline]
     pub fn mut_or(&mut self, rhs: Bitboard) {
-        self.0 |= rhs.get_value();
+        self.0 |= rhs.get_raw();
     }
 
     #[inline]
     pub fn mut_and(&mut self, rhs: Bitboard) {
-        self.0 &= rhs.get_value();
+        self.0 &= rhs.get_raw();
     }
 
     pub fn map<F: FnMut(Square)>(&self, mut method: F) {
-        let mut bitboard_copy = Bitboard::from_raw(self.get_value());
+        let mut bitboard_copy = Bitboard::from_raw(self.get_raw());
         while bitboard_copy.is_not_empty() {
             method(bitboard_copy.pop_ls1b_square())
         }
@@ -123,33 +123,33 @@ impl Bitboard {
     #[inline]
     pub const fn and(&self, rhs: Bitboard) -> Self {
         Self {
-            0: self.get_value() & rhs.get_value(),
+            0: self.get_raw() & rhs.get_raw(),
         }
     }
 
     #[inline]
     pub const fn or(&self, rhs: Bitboard) -> Self {
         Self {
-            0: self.get_value() | rhs.get_value(),
+            0: self.get_raw() | rhs.get_raw(),
         }
     }
 
     #[inline]
     pub const fn xor(&self, rhs: Bitboard) -> Self {
         Self {
-            0: self.get_value() ^ rhs.get_value(),
+            0: self.get_raw() ^ rhs.get_raw(),
         }
     }
 
     #[inline]
     pub const fn inverse(&self) -> Self {
-        Self(!self.get_value())
+        Self(!self.get_raw())
     }
 
     #[inline]
     pub const fn flip(&self) -> Self {
         Self {
-            0: self.get_value().swap_bytes(),
+            0: self.get_raw().swap_bytes(),
         }
     }
 
@@ -166,21 +166,21 @@ impl Bitboard {
     #[inline]
     pub const fn shift_left(self, rhs: u32) -> Self {
         Self {
-            0: self.get_value() << rhs,
+            0: self.get_raw() << rhs,
         }
     }
 
     #[inline]
     pub const fn shift_right(self, rhs: u32) -> Self {
         Self {
-            0: self.get_value() >> rhs,
+            0: self.get_raw() >> rhs,
         }
     }
 
     #[inline]
     pub const fn wrapping_mul(self, rhs: Bitboard) -> Self {
         Self {
-            0: self.get_value().wrapping_mul(rhs.get_value()),
+            0: self.get_raw().wrapping_mul(rhs.get_raw()),
         }
     }
 
@@ -205,7 +205,7 @@ impl Bitboard {
             result += "|\n";
         }
         result += " ------------------------\n";
-        result += &format!("  Bitboard: {}\n", self.get_value());
+        result += &format!("  Bitboard: {}\n", self.get_raw());
         result
     }
 }
@@ -220,7 +220,7 @@ impl From<u64> for Bitboard {
 impl From<Bitboard> for u64 {
     #[inline]
     fn from(board: Bitboard) -> Self {
-        board.get_value()
+        board.get_raw()
     }
 }
 
@@ -229,7 +229,7 @@ impl BitAnd for Bitboard {
 
     #[inline]
     fn bitand(self, rhs: Self) -> Self::Output {
-        Self::from_raw(self.get_value() & rhs.get_value())
+        Self::from_raw(self.get_raw() & rhs.get_raw())
     }
 }
 
@@ -238,7 +238,7 @@ impl BitAnd<u64> for Bitboard {
 
     #[inline]
     fn bitand(self, rhs: u64) -> Self::Output {
-        Self::from_raw(self.get_value() & rhs)
+        Self::from_raw(self.get_raw() & rhs)
     }
 }
 
@@ -247,7 +247,7 @@ impl BitAnd<Bitboard> for u64 {
 
     #[inline]
     fn bitand(self, rhs: Bitboard) -> Self::Output {
-        Bitboard::from_raw(self & rhs.get_value())
+        Bitboard::from_raw(self & rhs.get_raw())
     }
 }
 
@@ -261,14 +261,14 @@ impl BitAndAssign<u64> for Bitboard {
 impl BitAndAssign<Bitboard> for Bitboard {
     #[inline]
     fn bitand_assign(&mut self, rhs: Bitboard) {
-        self.0 &= rhs.get_value();
+        self.0 &= rhs.get_raw();
     }
 }
 
 impl BitAndAssign<Bitboard> for u64 {
     #[inline]
     fn bitand_assign(&mut self, rhs: Bitboard) {
-        *self &= rhs.get_value();
+        *self &= rhs.get_raw();
     }
 }
 
@@ -277,7 +277,7 @@ impl BitOr for Bitboard {
 
     #[inline]
     fn bitor(self, rhs: Self) -> Self::Output {
-        Self::from_raw(self.get_value() | rhs.get_value())
+        Self::from_raw(self.get_raw() | rhs.get_raw())
     }
 }
 
@@ -286,7 +286,7 @@ impl BitOr<u64> for Bitboard {
 
     #[inline]
     fn bitor(self, rhs: u64) -> Self::Output {
-        Self::from_raw(self.get_value() | rhs)
+        Self::from_raw(self.get_raw() | rhs)
     }
 }
 
@@ -295,7 +295,7 @@ impl BitOr<Bitboard> for u64 {
 
     #[inline]
     fn bitor(self, rhs: Bitboard) -> Self::Output {
-        Bitboard::from_raw(self | rhs.get_value())
+        Bitboard::from_raw(self | rhs.get_raw())
     }
 }
 
@@ -309,14 +309,14 @@ impl BitOrAssign<u64> for Bitboard {
 impl BitOrAssign<Bitboard> for Bitboard {
     #[inline]
     fn bitor_assign(&mut self, rhs: Bitboard) {
-        self.0 |= rhs.get_value();
+        self.0 |= rhs.get_raw();
     }
 }
 
 impl BitOrAssign<Bitboard> for u64 {
     #[inline]
     fn bitor_assign(&mut self, rhs: Bitboard) {
-        *self |= rhs.get_value();
+        *self |= rhs.get_raw();
     }
 }
 
@@ -325,7 +325,7 @@ impl BitXor for Bitboard {
 
     #[inline]
     fn bitxor(self, rhs: Self) -> Self::Output {
-        Self::from_raw(self.get_value() ^ rhs.get_value())
+        Self::from_raw(self.get_raw() ^ rhs.get_raw())
     }
 }
 
@@ -334,7 +334,7 @@ impl BitXor<u64> for Bitboard {
 
     #[inline]
     fn bitxor(self, rhs: u64) -> Self::Output {
-        Self::from_raw(self.get_value() ^ rhs)
+        Self::from_raw(self.get_raw() ^ rhs)
     }
 }
 
@@ -343,7 +343,7 @@ impl BitXor<Bitboard> for u64 {
 
     #[inline]
     fn bitxor(self, rhs: Bitboard) -> Self::Output {
-        Bitboard::from_raw(self ^ rhs.get_value())
+        Bitboard::from_raw(self ^ rhs.get_raw())
     }
 }
 
@@ -357,14 +357,14 @@ impl BitXorAssign<u64> for Bitboard {
 impl BitXorAssign<Bitboard> for Bitboard {
     #[inline]
     fn bitxor_assign(&mut self, rhs: Bitboard) {
-        self.0 ^= rhs.get_value();
+        self.0 ^= rhs.get_raw();
     }
 }
 
 impl BitXorAssign<Bitboard> for u64 {
     #[inline]
     fn bitxor_assign(&mut self, rhs: Bitboard) {
-        *self ^= rhs.get_value();
+        *self ^= rhs.get_raw();
     }
 }
 
@@ -373,7 +373,7 @@ impl Not for Bitboard {
 
     #[inline]
     fn not(self) -> Self::Output {
-        Self::from_raw(!self.get_value())
+        Self::from_raw(!self.get_raw())
     }
 }
 
@@ -382,7 +382,7 @@ impl Shl<u32> for Bitboard {
 
     #[inline]
     fn shl(self, rhs: u32) -> Self::Output {
-        Self::from_raw(self.get_value() << rhs)
+        Self::from_raw(self.get_raw() << rhs)
     }
 }
 
@@ -398,7 +398,7 @@ impl Shr<u32> for Bitboard {
 
     #[inline]
     fn shr(self, rhs: u32) -> Self::Output {
-        Self::from_raw(self.get_value() >> rhs)
+        Self::from_raw(self.get_raw() >> rhs)
     }
 }
 
@@ -406,6 +406,14 @@ impl ShrAssign<u32> for Bitboard {
     #[inline]
     fn shr_assign(&mut self, rhs: u32) {
         self.0 >>= rhs;
+    }
+}
+
+impl Sub<u64> for Bitboard {
+    type Output = Self;
+
+    fn sub(self, rhs: u64) -> Self::Output {
+        Self::from_raw(self.0 - rhs)
     }
 }
 

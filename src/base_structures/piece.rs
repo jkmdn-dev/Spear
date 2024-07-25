@@ -17,7 +17,7 @@ impl Piece {
     }
 
     #[inline]
-    pub const fn get_value(&self) -> u8 {
+    pub const fn get_raw(&self) -> u8 {
         self.0
     }
 
@@ -36,13 +36,13 @@ impl Piece {
 
 impl From<Piece> for u8 {
     fn from(piece: Piece) -> Self {
-        piece.get_value()
+        piece.get_raw()
     }
 }
 
 impl From<Piece> for usize {
     fn from(piece: Piece) -> Self {
-        piece.get_value() as usize
+        piece.get_raw() as usize
     }
 }
 

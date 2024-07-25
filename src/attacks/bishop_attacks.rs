@@ -6,11 +6,11 @@ pub struct BishopAttacks;
 impl BishopAttacks {
     #[inline]
     pub fn get_bishop_attacks(square: Square, mut occupancy: Bitboard) -> Bitboard {
-        let square_usize_value = square.get_value() as usize;
+        let square_usize_value = square.get_raw() as usize;
         occupancy &= BISHOP_MASKS[square_usize_value];
         occupancy = occupancy.wrapping_mul(MAGIC_NUMBERS_BISHOP[square_usize_value].into());
         occupancy >>= 64 - BISHOP_OCCUPANCY_COUNT[square_usize_value] as u32;
-        BISHOP_ATTACKS[square_usize_value][occupancy.get_value() as usize]
+        BISHOP_ATTACKS[square_usize_value][occupancy.get_raw() as usize]
     }
 }
 
@@ -31,7 +31,7 @@ const BISHOP_OCCUPANCY_COUNT: [usize; 64] = {
         let mut file = 0;
         while file < 8 {
             let square = Square::from_coords(rank, file);
-            result[square.get_value() as usize] = mask_bishop_attacks(square).pop_count() as usize;
+            result[square.get_raw() as usize] = mask_bishop_attacks(square).pop_count() as usize;
             file += 1;
         }
         rank += 1;
@@ -71,7 +71,7 @@ const fn mask_bishop_attacks(square: Square) -> Bitboard {
     while rank < 7 && file < 7 {
         result |= Square::from_coords(rank as u8, file as u8)
             .get_bit()
-            .get_value();
+            .get_raw();
         rank += 1;
         file += 1;
     }
@@ -81,7 +81,7 @@ const fn mask_bishop_attacks(square: Square) -> Bitboard {
     while rank > 0 && file < 7 {
         result |= Square::from_coords(rank as u8, file as u8)
             .get_bit()
-            .get_value();
+            .get_raw();
         rank -= 1;
         file += 1;
     }
@@ -91,7 +91,7 @@ const fn mask_bishop_attacks(square: Square) -> Bitboard {
     while rank > 0 && file > 0 {
         result |= Square::from_coords(rank as u8, file as u8)
             .get_bit()
-            .get_value();
+            .get_raw();
         rank -= 1;
         file -= 1;
     }
@@ -101,7 +101,7 @@ const fn mask_bishop_attacks(square: Square) -> Bitboard {
     while rank < 7 && file > 0 {
         result |= Square::from_coords(rank as u8, file as u8)
             .get_bit()
-            .get_value();
+            .get_raw();
         rank += 1;
         file -= 1;
     }

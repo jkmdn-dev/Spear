@@ -16,6 +16,11 @@ impl ChessBoard {
     }
 
     #[inline]
+    pub fn checkers(&self) -> Bitboard {
+        self.masks.checkers
+    }
+
+    #[inline]
     pub fn generate_checkers_mask(&mut self) {
         self.masks.checkers = self.all_attackers_to_square(
             self.get_occupancy(),

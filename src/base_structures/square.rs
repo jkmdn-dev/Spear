@@ -85,43 +85,43 @@ impl Square {
     }
 
     #[inline]
-    pub const fn get_value(&self) -> u8 {
+    pub const fn get_raw(&self) -> u8 {
         self.0
     }
 
     #[inline]
     pub const fn get_rank(&self) -> u8 {
-        self.get_value() / 8
+        self.get_raw() / 8
     }
 
     #[inline]
     pub const fn get_file(&self) -> u8 {
-        self.get_value() % 8
+        self.get_raw() % 8
     }
 
     #[inline]
     pub const fn get_bit(&self) -> Bitboard {
-        Bitboard::from_raw(1u64 << self.get_value())
+        Bitboard::from_raw(1u64 << self.get_raw())
     }
 
     #[inline]
     pub const fn equals(&self, rhs: Square) -> bool {
-        self.get_value() == rhs.get_value()
+        self.get_raw() == rhs.get_raw()
     }
 
     #[inline]
     pub const fn flip(&self) -> Self {
-        Self::from_raw(self.get_value() ^ 56)
+        Self::from_raw(self.get_raw() ^ 56)
     }
 
     #[inline]
-    pub fn shift_left(&self, shift: i32) -> Self {
-        Self::from_raw(self.get_value() << shift)
+    pub fn shift_left(&self, shift: u32) -> Self {
+        (self.get_bit() << shift).ls1b_square()
     }
 
     #[inline]
-    pub const fn shift_right(&self, shift: i32) -> Self {
-        Self::from_raw(self.get_value() >> shift)
+    pub fn shift_right(&self, shift: u32) -> Self {
+        (self.get_bit() >> shift).ls1b_square()
     }
 
     pub fn to_string(&self) -> String {
@@ -129,8 +129,8 @@ impl Square {
             return "NULL".to_string();
         }
 
-        let file = self.get_value() % 8;
-        let rank = ((self.get_value() as f32) / 8_f32).floor() as u8 + 1;
+        let file = self.get_raw() % 8;
+        let rank = ((self.get_raw() as f32) / 8_f32).floor() as u8 + 1;
         return format!("{}{}", ('a' as u8 + file) as char, rank);
     }
 
@@ -143,13 +143,13 @@ impl Square {
 }
 impl From<Square> for u8 {
     fn from(square: Square) -> Self {
-        square.get_value()
+        square.get_raw()
     }
 }
 
 impl From<Square> for usize {
     fn from(square: Square) -> Self {
-        square.get_value() as usize
+        square.get_raw() as usize
     }
 }
 
@@ -159,7 +159,7 @@ impl Add<u8> for Square {
     #[inline]
     fn add(self, rhs: u8) -> Self::Output {
         Self {
-            0: self.get_value() + rhs,
+            0: self.get_raw() + rhs,
         }
     }
 }
@@ -169,7 +169,7 @@ impl Add<Square> for u8 {
     #[inline]
     fn add(self, rhs: Square) -> Self::Output {
         Square {
-            0: self + rhs.get_value(),
+            0: self + rhs.get_raw(),
         }
     }
 }
@@ -178,7 +178,7 @@ impl BitXor<u8> for Square {
 
     #[inline]
     fn bitxor(self, rhs: u8) -> Self::Output {
-        Self::from_raw(self.get_value() ^ rhs)
+        Self::from_raw(self.get_raw() ^ rhs)
     }
 }
 
