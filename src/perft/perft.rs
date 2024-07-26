@@ -8,13 +8,13 @@ impl Perft {
         let board = ChessBoard::from_fen(fen);
 
         if PRINT {
+            board.draw_board();
             println!("-----------------------------------------------------------");
             println!("  Starting PERFT");
             println!("  Depth: {depth}");
             println!("  Split: {SPLIT}");
             println!("  Bulk: {BULK}");
             println!("-----------------------------------------------------------");
-            board.draw_board();
         }
 
         let timer = Instant::now();
