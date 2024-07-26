@@ -39,7 +39,8 @@ impl ChessBoard {
             MoveGen::generate_piece_moves::<F, CAPTURE_ONLY, { MoveGen::BISHOP }>(self, push_map, capture_map, diagonal_pins, ortographic_pins, method);
             MoveGen::generate_piece_moves::<F, CAPTURE_ONLY, { MoveGen::ROOK }>(self, push_map, capture_map, diagonal_pins, ortographic_pins, method);
         } else if (checkers & (checkers - 1)).is_empty() {
-            let push_map = Rays::get_ray(king_square, checkers.ls1b_square());
+            let checker = checkers.ls1b_square();
+            let push_map = Rays::get_ray(king_square, checker).exclude(checker);
             if self.side_to_move() == Side::WHITE {
                 MoveGen::generate_pawn_moves::<F, true, CAPTURE_ONLY>(self, push_map, checkers, diagonal_pins, ortographic_pins, method)
             } else {

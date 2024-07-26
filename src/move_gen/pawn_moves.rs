@@ -21,15 +21,15 @@ impl MoveGen {
            return;
         }
 
-        handle_pawn_pushes::<F, WHITE>(pushable_pawns, push_map, ortographic_pins, promotion_rank, double_push_rank, method);
+        handle_pawn_pushes::<F, WHITE>(board, pushable_pawns, push_map, ortographic_pins, promotion_rank, double_push_rank, method);
     }
 }
 
-fn handle_pawn_pushes<F: FnMut(Move), const WHITE: bool>(pushable_pawns: Bitboard, push_map: Bitboard, ortographic_pins: Bitboard, promotion_rank: Bitboard, double_push_rank: Bitboard, method: &mut F) { 
+fn handle_pawn_pushes<F: FnMut(Move), const WHITE: bool>(board: &ChessBoard, pushable_pawns: Bitboard, push_map: Bitboard, ortographic_pins: Bitboard, promotion_rank: Bitboard, double_push_rank: Bitboard, method: &mut F) { 
     let pinned_pawns = pushable_pawns & ortographic_pins;
     let not_pinned_pawns = pushable_pawns & !pinned_pawns;
 
-    not_pinned_pawns.map(|pawn_square| {
+    (not_pinned_pawns & !promotion_rank).map(|pawn_square| {
         let to_square = if WHITE { pawn_square.shift_left(8)  } else { pawn_square.shift_right(8) };
         if push_map.get_bit(to_square) {
             method(Move::from_squares(pawn_square, to_square, MoveFlag::QUIET_MOVE))
@@ -56,7 +56,7 @@ fn handle_pawn_pushes<F: FnMut(Move), const WHITE: bool>(pushable_pawns: Bitboar
     (not_pinned_pawns & double_push_rank).map(|pawn_square| {
         let passing_square = if WHITE { pawn_square.shift_left(8)  } else { pawn_square.shift_right(8) };
         let to_square = if WHITE { pawn_square.shift_left(16)  } else { pawn_square.shift_right(16) };
-        if push_map.get_bit(passing_square) && push_map.get_bit(to_square) {
+        if (!board.get_occupancy()).get_bit(passing_square) && push_map.get_bit(to_square) {
             method(Move::from_squares(pawn_square, to_square, MoveFlag::DOUBLE_PUSH))
         }
     });
@@ -64,7 +64,7 @@ fn handle_pawn_pushes<F: FnMut(Move), const WHITE: bool>(pushable_pawns: Bitboar
     (pinned_pawns & double_push_rank).map(|pawn_square| {
         let passing_square = if WHITE { pawn_square.shift_left(8)  } else { pawn_square.shift_right(8) };
         let to_square = if WHITE { pawn_square.shift_left(16)  } else { pawn_square.shift_right(16) };
-        if (push_map & ortographic_pins).get_bit(passing_square) && (push_map & ortographic_pins).get_bit(to_square) {
+        if (!board.get_occupancy()).get_bit(passing_square) && (push_map & ortographic_pins).get_bit(to_square) {
             method(Move::from_squares(pawn_square, to_square, MoveFlag::DOUBLE_PUSH))
         }
     });

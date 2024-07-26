@@ -3,6 +3,7 @@ mod base_structures;
 mod chess_board;
 mod move_gen;
 mod utils;
+mod perft;
 
 #[allow(unused)]
 pub use base_structures::Bitboard;
@@ -20,3 +21,5 @@ pub use base_structures::Square;
 pub use base_structures::FEN;
 #[allow(unused)]
 pub use chess_board::ChessBoard;
+#[allow(unused)]
+pub use perft::Perft;

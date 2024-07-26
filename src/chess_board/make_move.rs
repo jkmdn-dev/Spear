@@ -12,13 +12,13 @@ impl ChessBoard {
             self.get_piece_on_square(to_square)
         };
 
-        //add promotion exception later
-        self.set_piece_on_square(to_square, self.side_to_move(), moved_piece);
-        self.remove_piece_on_square(from_square, self.side_to_move(), moved_piece);
-
         if captured_piece != Piece::NONE {
             self.remove_piece_on_square(to_square, self.side_to_move().flipped(), captured_piece);
         }
+
+        //add promotion exception later
+        self.set_piece_on_square(to_square, self.side_to_move(), moved_piece);
+        self.remove_piece_on_square(from_square, self.side_to_move(), moved_piece);
 
         if moved_piece == Piece::PAWN || mv.is_capture() {
             *self.state.get_half_move_counter_mut() = 0;
