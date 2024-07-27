@@ -16,7 +16,7 @@ impl ChessBoard {
         let diagonal_pins = self.generate_diagonal_pins_mask();
         let ortographic_pins = self.generate_ortographic_pins_mask();
         let king_square = self.get_king_square(self.side_to_move());
-        let checkers: crate::Bitboard = self.checkers();
+        let checkers = self.generate_checkers_mask();
         let attack_map = self.generate_attack_map(self.side_to_move().flipped());
 
         MoveGen::generate_king_moves::<F, CAPTURE_ONLY>(self, attack_map, king_square, method);

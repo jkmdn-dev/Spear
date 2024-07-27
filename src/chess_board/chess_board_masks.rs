@@ -6,27 +6,21 @@ use crate::{
 
 #[derive(Clone, Copy, Default)]
 pub struct ChessBoardMasks {
-    checkers: Bitboard,
 }
 
 impl ChessBoard {
     #[inline]
     pub fn is_in_check(&self) -> bool {
-        self.masks.checkers.is_not_empty()
+        self.is_square_attacked(self.get_king_square(self.side_to_move()), self.side_to_move().flipped())
     }
 
     #[inline]
-    pub fn checkers(&self) -> Bitboard {
-        self.masks.checkers
-    }
-
-    #[inline]
-    pub fn generate_checkers_mask(&mut self) {
-        self.masks.checkers = self.all_attackers_to_square(
+    pub fn generate_checkers_mask(&self) -> Bitboard {
+        self.all_attackers_to_square(
             self.get_occupancy(),
             self.get_king_square(self.side_to_move()),
             self.side_to_move().flipped(),
-        );
+        )
     }
 
     pub fn generate_ortographic_pins_mask(&self) -> Bitboard {

@@ -84,8 +84,6 @@ impl ChessBoard {
         self.state.get_side_to_move_mut().mut_flip();
         self.state.get_key_mut().update_side_to_move_hash();
 
-        self.generate_checkers_mask();
-
         self.move_history[self.half_move_counter() as usize] = self.get_key();
     }
 }
