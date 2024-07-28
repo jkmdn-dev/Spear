@@ -36,12 +36,12 @@ fn main() {
     ];
 
     for _ in 0..2 {
-        for fen in &fens {
+        for (index, fen) in fens.clone().into_iter().enumerate() {
             let (result_nodes, result_duration) = Perft::perft::<true, false, false>(&fen.0, fen.1);
             if result_nodes != fen.3 {
-                println!("perft failed for fen: {}", fen.0)
+                println!("Perft {index} has failed in {result_duration}ms ({}nps)", result_nodes * 1000/result_duration);
             } else {
-                println!("perft passed for fen: {}", fen.0)
+                println!("Perft {index} has passed in {result_duration}ms ({}nps)", result_nodes * 1000/result_duration);
             }
 
             nodes += result_nodes;
