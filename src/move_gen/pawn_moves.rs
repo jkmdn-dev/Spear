@@ -1,4 +1,4 @@
-use crate::{attacks::Attacks, Bitboard, ChessBoard, Move, MoveFlag, Piece, Square};
+use crate::{attacks::Attacks, Bitboard, ChessBoard, Move, MoveFlag, MoveHistory, Piece, Square};
 
 use super::MoveGen;
 
@@ -115,7 +115,7 @@ fn handle_en_passant<F: FnMut(Move), const STM_WHITE: bool, const NSTM_WHITE: bo
     pawns.map(|pawn_square| {
         let mut board_copy = *board;
         let new_mv = Move::from_squares(pawn_square, board.en_passant_square(), MoveFlag::EN_PASSANT);
-        board_copy.make_move(new_mv);
+        board_copy.make_move(new_mv, &mut MoveHistory::new());
 
         let king_square = board_copy.get_king_square::<STM_WHITE>();
         if !board_copy.is_square_attacked_with_attack_map(king_square, attack_map) {

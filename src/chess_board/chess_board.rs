@@ -1,8 +1,7 @@
 use colored::Colorize;
 
 use crate::{
-    base_structures::{Side, ZobristKey},
-    CastleRight, Piece, Square, FEN,
+    base_structures::{Side, ZobristKey}, CastleRight, MoveHistory, Piece, Square, FEN
 };
 
 use super::{
@@ -14,17 +13,15 @@ use super::{
 pub struct ChessBoard {
     pub(super) pieces: ChessBoardPieces,
     pub(super) masks: ChessBoardMasks,
-    pub(super) state: ChessBoardState,
-    pub(crate) move_history: [ZobristKey; 100],
+    pub(super) state: ChessBoardState
 }
 
 impl ChessBoard {
-    pub fn from_fen(fen: &FEN) -> Self {
+    pub fn from_fen(fen: &FEN, move_history: &mut MoveHistory) -> Self {
         let mut board = Self {
             pieces: ChessBoardPieces::default(),
             masks: ChessBoardMasks::default(),
-            state: ChessBoardState::default(),
-            move_history: [ZobristKey::default(); 100],
+            state: ChessBoardState::default()
         };
 
         for (rank_index, rank) in fen.board.clone().into_iter().enumerate() {
@@ -83,8 +80,7 @@ impl ChessBoard {
             return Self {
                 pieces: ChessBoardPieces::default(),
                 masks: ChessBoardMasks::default(),
-                state: ChessBoardState::default(),
-                move_history: [ZobristKey::default(); 100],
+                state: ChessBoardState::default()
             };
         }
 
@@ -148,8 +144,7 @@ impl ChessBoard {
             board.generate_diagonal_pins_mask::<false, true>();
         }
 
-        board.move_history = [ZobristKey::default(); 100];
-        board.move_history[board.half_move_counter() as usize] = board.get_key();
+        move_history.push(board.get_key());
 
         board
     }

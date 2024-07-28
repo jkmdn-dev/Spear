@@ -7,6 +7,7 @@ mod piece;
 mod side;
 mod square;
 mod zobrist;
+mod move_history;
 
 pub use bitboard::Bitboard;
 pub use castle_rights::CastleRight;
@@ -17,3 +18,4 @@ pub use r#move::Move;
 pub use side::Side;
 pub use square::Square;
 pub use zobrist::ZobristKey;
+pub use move_history::MoveHistory;

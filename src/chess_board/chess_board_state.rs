@@ -81,15 +81,4 @@ impl ChessBoard {
             < 2;
         pawns && major_pieces && white_minor_pieces && black_minor_pieces
     }
-
-    #[inline]
-    pub fn three_fold(&self) -> bool {
-        let mut appearance_count = 0;
-        for mv_key in 0..self.state.half_moves as usize {
-            if self.move_history[mv_key] == self.state.zobrist {
-                appearance_count += 1
-            }
-        }
-        appearance_count >= 2
-    }
 }

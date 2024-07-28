@@ -20,6 +20,8 @@ pub use base_structures::Square;
 #[allow(unused)]
 pub use base_structures::FEN;
 #[allow(unused)]
+pub use base_structures::MoveHistory;
+#[allow(unused)]
 pub use chess_board::ChessBoard;
 #[allow(unused)]
 pub use perft::Perft;

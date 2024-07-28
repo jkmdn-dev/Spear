@@ -1,11 +1,11 @@
 use std::time::Instant;
 
-use crate::{ChessBoard, FEN};
+use crate::{ChessBoard, MoveHistory, FEN};
 
 pub struct Perft;
 impl Perft {
     pub fn perft<const BULK: bool, const SPLIT: bool, const PRINT: bool>(fen: &FEN, depth: u8) -> (u128, u128) {
-        let board = ChessBoard::from_fen(fen);
+        let board = ChessBoard::from_fen(fen, &mut MoveHistory::new());
 
         if PRINT {
             board.draw_board();
@@ -47,7 +47,7 @@ fn perft_internal<const BULK: bool, const SPLIT: bool, const PRINT: bool>(board:
 
     board.map_moves(|mv| {
         let mut board_copy = *board;
-        board_copy.make_move(mv);
+        board_copy.make_move(mv, &mut MoveHistory::new());
         let result = perft_internal::<BULK, SPLIT, PRINT>(&board_copy, depth - 1, false);
         node_count += result;
 
