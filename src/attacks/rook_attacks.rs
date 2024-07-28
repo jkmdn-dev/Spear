@@ -1,3 +1,6 @@
+#[cfg(feature = "pext")]
+use std::arch::x86_64::_pext_u64;
+
 use once_cell::sync::Lazy;
 
 use crate::{Bitboard, Square};
@@ -5,12 +8,15 @@ use crate::{Bitboard, Square};
 pub struct RookAttacks;
 impl RookAttacks {
     #[inline]
-    pub fn get_rook_attacks(square: Square, mut occupancy: Bitboard) -> Bitboard {
+    pub fn get_rook_attacks(square: Square, occupancy: Bitboard) -> Bitboard {
         let square = usize::from(square);
-        occupancy &= ROOK_MASKS[square];
-        occupancy = occupancy.wrapping_mul(MAGIC_NUMBERS_ROOK[square].into());
-        occupancy >>= 64 - ROOK_OCCUPANCY_COUNT[square] as u32;
-        ROOK_ATTACKS[square][occupancy.get_raw() as usize]
+
+        let index = ((occupancy & ROOK_MASKS[square])
+            .wrapping_mul(MAGIC_NUMBERS_ROOK[square].into())
+            >> (64 - ROOK_OCCUPANCY_COUNT[square] as u32))
+            .get_raw() as usize;
+
+        ROOK_ATTACKS[square][index]
     }
 }
 
@@ -41,7 +47,6 @@ const ROOK_OCCUPANCY_COUNT: [usize; 64] = {
 
 static ROOK_ATTACKS: Lazy<Vec<Vec<Bitboard>>> = Lazy::new(|| {
     let mut result = vec![vec![Bitboard::EMPTY; 4096]; 64];
-
     for square_index in 0..64 {
         let square = Square::from_raw(square_index);
         let attack_mask = mask_rook_attacks(square);
@@ -49,12 +54,11 @@ static ROOK_ATTACKS: Lazy<Vec<Vec<Bitboard>>> = Lazy::new(|| {
         let mut index = 0;
         while index < 1 << relevant_bit_count {
             let occupancy = generate_occupancy(index, relevant_bit_count as usize, attack_mask);
-            let magic_index: u64 = (occupancy
-                .wrapping_mul(MAGIC_NUMBERS_ROOK[square_index as usize].into())
+            let magic_index = (occupancy
+                .wrapping_mul(MAGIC_NUMBERS_ROOK[square.get_raw() as usize].into())
                 >> (64 - relevant_bit_count))
-                .into();
-            result[square_index as usize][magic_index as usize] =
-                generate_rook_attacks(square, occupancy);
+                .get_raw() as usize;
+            result[square_index as usize][magic_index] = generate_rook_attacks(square, occupancy);
             index += 1;
         }
     }

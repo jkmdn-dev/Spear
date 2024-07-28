@@ -4,7 +4,10 @@ use crate::{ChessBoard, MoveHistory, FEN};
 
 pub struct Perft;
 impl Perft {
-    pub fn perft<const BULK: bool, const SPLIT: bool, const PRINT: bool>(fen: &FEN, depth: u8) -> (u128, u128) {
+    pub fn perft<const BULK: bool, const SPLIT: bool, const PRINT: bool>(
+        fen: &FEN,
+        depth: u8,
+    ) -> (u128, u128) {
         let board = ChessBoard::from_fen(fen, &mut MoveHistory::new());
 
         if PRINT {
@@ -23,7 +26,12 @@ impl Perft {
 
         if PRINT {
             println!("-----------------------------------------------------------");
-            println!("  Perft ended! {} nodes, {:.2}s, {:.2} Mnps", result, duration as f64 / 1000.0, ((result * 1000) as f64 / duration as f64 ) / 1_000_000f64);
+            println!(
+                "  Perft ended! {} nodes, {:.2}s, {:.2} Mnps",
+                result,
+                duration as f64 / 1000.0,
+                ((result * 1000) as f64 / duration as f64) / 1_000_000f64
+            );
             println!("-----------------------------------------------------------");
         }
 
@@ -31,7 +39,11 @@ impl Perft {
     }
 }
 
-fn perft_internal<const BULK: bool, const SPLIT: bool, const PRINT: bool>(board: &ChessBoard, depth: u8, first: bool) -> u128 {
+fn perft_internal<const BULK: bool, const SPLIT: bool, const PRINT: bool>(
+    board: &ChessBoard,
+    depth: u8,
+    first: bool,
+) -> u128 {
     let mut node_count = 0u128;
 
     if BULK && depth == 1 {

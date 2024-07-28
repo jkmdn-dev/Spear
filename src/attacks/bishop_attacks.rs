@@ -5,12 +5,15 @@ use crate::{Bitboard, Square};
 pub struct BishopAttacks;
 impl BishopAttacks {
     #[inline]
-    pub fn get_bishop_attacks(square: Square, mut occupancy: Bitboard) -> Bitboard {
-        let square_usize_value = square.get_raw() as usize;
-        occupancy &= BISHOP_MASKS[square_usize_value];
-        occupancy = occupancy.wrapping_mul(MAGIC_NUMBERS_BISHOP[square_usize_value].into());
-        occupancy >>= 64 - BISHOP_OCCUPANCY_COUNT[square_usize_value] as u32;
-        BISHOP_ATTACKS[square_usize_value][occupancy.get_raw() as usize]
+    pub fn get_bishop_attacks(square: Square, occupancy: Bitboard) -> Bitboard {
+        let square = usize::from(square);
+
+        let index = ((occupancy & BISHOP_MASKS[square])
+            .wrapping_mul(MAGIC_NUMBERS_BISHOP[square].into())
+            >> (64 - BISHOP_OCCUPANCY_COUNT[square] as u32))
+            .get_raw() as usize;
+
+        BISHOP_ATTACKS[square][index]
     }
 }
 
@@ -41,7 +44,6 @@ const BISHOP_OCCUPANCY_COUNT: [usize; 64] = {
 
 static BISHOP_ATTACKS: Lazy<Vec<Vec<Bitboard>>> = Lazy::new(|| {
     let mut result = vec![vec![Bitboard::EMPTY; 512]; 64];
-
     for square_index in 0..64 {
         let square = Square::from_raw(square_index);
         let attack_mask = mask_bishop_attacks(square);
@@ -49,12 +51,11 @@ static BISHOP_ATTACKS: Lazy<Vec<Vec<Bitboard>>> = Lazy::new(|| {
         let mut index = 0;
         while index < 1 << relevant_bit_count {
             let occupancy = generate_occupancy(index, relevant_bit_count as usize, attack_mask);
-            let magic_index: u64 = (occupancy
-                .wrapping_mul(MAGIC_NUMBERS_BISHOP[square_index as usize].into())
+            let magic_index = (occupancy
+                .wrapping_mul(MAGIC_NUMBERS_BISHOP[square.get_raw() as usize].into())
                 >> (64 - relevant_bit_count))
-                .into();
-            result[square_index as usize][magic_index as usize] =
-                generate_bishop_attacks(square, occupancy);
+                .get_raw() as usize;
+            result[square_index as usize][magic_index] = generate_bishop_attacks(square, occupancy);
             index += 1;
         }
     }

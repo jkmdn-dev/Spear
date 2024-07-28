@@ -23,9 +23,9 @@ impl MoveHistory {
         let mut repetitions = 0;
         for value in 0..self.1 {
             if key != self.0[value] {
-                continue
+                continue;
             }
-            
+
             repetitions += 1;
         }
         repetitions

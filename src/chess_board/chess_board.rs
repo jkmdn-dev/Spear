@@ -1,19 +1,17 @@
 use colored::Colorize;
 
-use crate::{
-    base_structures::{Side, ZobristKey}, CastleRight, MoveHistory, Piece, Square, FEN
-};
+use crate::{base_structures::Side, CastleRight, MoveHistory, Piece, Square, FEN};
 
 use super::{
     chess_board_masks::ChessBoardMasks, chess_board_pieces::ChessBoardPieces,
     chess_board_state::ChessBoardState,
 };
 
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, Default)]
 pub struct ChessBoard {
     pub(super) pieces: ChessBoardPieces,
     pub(super) masks: ChessBoardMasks,
-    pub(super) state: ChessBoardState
+    pub(super) state: ChessBoardState,
 }
 
 impl ChessBoard {
@@ -21,7 +19,7 @@ impl ChessBoard {
         let mut board = Self {
             pieces: ChessBoardPieces::default(),
             masks: ChessBoardMasks::default(),
-            state: ChessBoardState::default()
+            state: ChessBoardState::default(),
         };
 
         for (rank_index, rank) in fen.board.clone().into_iter().enumerate() {
@@ -74,13 +72,22 @@ impl ChessBoard {
             board.state.get_key_mut().update_side_to_move_hash();
         }
 
-        let king_square = if board.side_to_move() == Side::WHITE { board.get_king_square::<true>() } else { board.get_king_square::<false>() };
-        if if board.side_to_move() == Side::WHITE { board.is_square_attacked::<true, false>(king_square) } else {  board.is_square_attacked::<false, true>(king_square) } {
+        let king_square = if board.side_to_move() == Side::WHITE {
+            board.get_king_square::<false>()
+        } else {
+            board.get_king_square::<true>()
+        };
+
+        if if board.side_to_move() == Side::WHITE {
+            board.is_square_attacked::<false, true>(king_square)
+        } else {
+            board.is_square_attacked::<true, false>(king_square)
+        } {
             print!("Illegal position!\n");
             return Self {
                 pieces: ChessBoardPieces::default(),
                 masks: ChessBoardMasks::default(),
-                state: ChessBoardState::default()
+                state: ChessBoardState::default(),
             };
         }
 
@@ -249,7 +256,14 @@ impl ChessBoard {
         info.push(en_passant.as_str());
         let half_moves = format!("Half Moves: {}", self.half_move_counter());
         info.push(half_moves.as_str());
-        let in_check = format!("In Check: {}", if self.side_to_move() == Side::WHITE { self.is_in_check::<true, false>() } else { self.is_in_check::<false, true>() });
+        let in_check = format!(
+            "In Check: {}",
+            if self.side_to_move() == Side::WHITE {
+                self.is_in_check::<true, false>()
+            } else {
+                self.is_in_check::<false, true>()
+            }
+        );
         info.push(in_check.as_str());
         let xxx = format!("");
         info.push(xxx.as_str());

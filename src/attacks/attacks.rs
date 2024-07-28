@@ -1,4 +1,3 @@
-
 use crate::{Bitboard, ChessBoard, Piece, Square};
 
 use super::{
@@ -20,7 +19,7 @@ impl Attacks {
 
     #[inline]
     pub fn get_pawn_attacks_for_square<const WHITE: bool>(square: Square) -> Bitboard {
-        PawnsAttacks::ATTACK_TABLE[1-usize::from(WHITE)][square.get_raw() as usize]
+        PawnsAttacks::ATTACK_TABLE[1 - usize::from(WHITE)][square.get_raw() as usize]
     }
 
     #[inline]
@@ -38,7 +37,7 @@ impl ChessBoard {
     pub fn all_attackers_to_square<const DEFENDER_WHITE: bool, const ATTACKER_WHITE: bool>(
         &self,
         occupancy: Bitboard,
-        square: Square
+        square: Square,
     ) -> Bitboard {
         let queens = self.get_piece_mask(Piece::QUEEN);
         ((Attacks::get_knight_attacks_for_square(square) & self.get_piece_mask(Piece::KNIGHT))
@@ -52,7 +51,10 @@ impl ChessBoard {
             & self.get_occupancy_for_side::<ATTACKER_WHITE>()
     }
 
-    pub fn is_square_attacked_with_occupancy<const DEFENDER_WHITE: bool, const ATTACKER_WHITE: bool>(
+    pub fn is_square_attacked_with_occupancy<
+        const DEFENDER_WHITE: bool,
+        const ATTACKER_WHITE: bool,
+    >(
         &self,
         square: Square,
         occupancy: Bitboard,
@@ -62,8 +64,14 @@ impl ChessBoard {
     }
 
     #[inline]
-    pub fn is_square_attacked<const DEFENDER_WHITE: bool, const ATTACKER_WHITE: bool>(&self, square: Square) -> bool {
-        self.is_square_attacked_with_occupancy::<DEFENDER_WHITE, ATTACKER_WHITE>(square, self.get_occupancy())
+    pub fn is_square_attacked<const DEFENDER_WHITE: bool, const ATTACKER_WHITE: bool>(
+        &self,
+        square: Square,
+    ) -> bool {
+        self.is_square_attacked_with_occupancy::<DEFENDER_WHITE, ATTACKER_WHITE>(
+            square,
+            self.get_occupancy(),
+        )
     }
 
     #[inline]

@@ -4,24 +4,32 @@ use crate::{
 };
 
 #[derive(Clone, Copy, Default)]
-pub struct ChessBoardMasks {
-}
+pub struct ChessBoardMasks {}
 
 impl ChessBoard {
     #[inline]
     pub fn is_in_check<const DEFENDER_WHITE: bool, const ATTACKER_WHITE: bool>(&self) -> bool {
-        self.is_square_attacked::<DEFENDER_WHITE, ATTACKER_WHITE>(self.get_king_square::<DEFENDER_WHITE>())
-    }
-
-    #[inline]
-    pub fn generate_checkers_mask<const DEFENDER_WHITE: bool, const ATTACKER_WHITE: bool>(&self) -> Bitboard {
-        self.all_attackers_to_square::<DEFENDER_WHITE, ATTACKER_WHITE>(
-            self.get_occupancy(),
-            self.get_king_square::<DEFENDER_WHITE>()
+        self.is_square_attacked::<DEFENDER_WHITE, ATTACKER_WHITE>(
+            self.get_king_square::<DEFENDER_WHITE>(),
         )
     }
 
-    pub fn generate_ortographic_pins_mask<const DEFENDER_WHITE: bool, const ATTACKER_WHITE: bool>(&self) -> Bitboard {
+    #[inline]
+    pub fn generate_checkers_mask<const DEFENDER_WHITE: bool, const ATTACKER_WHITE: bool>(
+        &self,
+    ) -> Bitboard {
+        self.all_attackers_to_square::<DEFENDER_WHITE, ATTACKER_WHITE>(
+            self.get_occupancy(),
+            self.get_king_square::<DEFENDER_WHITE>(),
+        )
+    }
+
+    pub fn generate_ortographic_pins_mask<
+        const DEFENDER_WHITE: bool,
+        const ATTACKER_WHITE: bool,
+    >(
+        &self,
+    ) -> Bitboard {
         let king_square = self.get_king_square::<DEFENDER_WHITE>();
         let relevant_pieces = self.get_piece_mask_for_side::<ATTACKER_WHITE>(Piece::ROOK)
             | self.get_piece_mask_for_side::<ATTACKER_WHITE>(Piece::QUEEN);
@@ -39,7 +47,9 @@ impl ChessBoard {
         result
     }
 
-    pub fn generate_diagonal_pins_mask<const DEFENDER_WHITE: bool, const ATTACKER_WHITE: bool>(&self) -> Bitboard {
+    pub fn generate_diagonal_pins_mask<const DEFENDER_WHITE: bool, const ATTACKER_WHITE: bool>(
+        &self,
+    ) -> Bitboard {
         let king_square = self.get_king_square::<DEFENDER_WHITE>();
         let relevant_pieces = self.get_piece_mask_for_side::<ATTACKER_WHITE>(Piece::BISHOP)
             | self.get_piece_mask_for_side::<ATTACKER_WHITE>(Piece::QUEEN);
@@ -57,7 +67,9 @@ impl ChessBoard {
         result
     }
 
-    pub fn generate_attack_map<const DEFENDER_WHITE: bool, const ATTACKER_WHITE: bool>(&self) -> Bitboard {
+    pub fn generate_attack_map<const DEFENDER_WHITE: bool, const ATTACKER_WHITE: bool>(
+        &self,
+    ) -> Bitboard {
         let mut threats = Bitboard::EMPTY;
 
         let king_square = self.get_king_square::<DEFENDER_WHITE>();

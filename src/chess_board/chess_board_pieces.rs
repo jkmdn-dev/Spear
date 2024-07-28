@@ -71,7 +71,8 @@ impl ChessBoard {
 
     #[inline]
     pub fn get_king_square<const WHITE: bool>(&self) -> Square {
-        self.get_piece_mask_for_side::<WHITE>(Piece::KING).ls1b_square()
+        self.get_piece_mask_for_side::<WHITE>(Piece::KING)
+            .ls1b_square()
     }
 
     #[inline]
