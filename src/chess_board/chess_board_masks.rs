@@ -23,48 +23,33 @@ impl ChessBoard {
             self.get_king_square::<DEFENDER_WHITE>(),
         )
     }
-
-    pub fn generate_ortographic_pins_mask<
-        const DEFENDER_WHITE: bool,
-        const ATTACKER_WHITE: bool,
-    >(
-        &self,
-    ) -> Bitboard {
+    
+    pub fn generate_pin_masks<const DEFENDER_WHITE: bool, const ATTACKER_WHITE: bool>(&self) -> (Bitboard, Bitboard) {
         let king_square = self.get_king_square::<DEFENDER_WHITE>();
-        let relevant_pieces = self.get_piece_mask_for_side::<ATTACKER_WHITE>(Piece::ROOK)
-            | self.get_piece_mask_for_side::<ATTACKER_WHITE>(Piece::QUEEN);
-        let potential_pinners = Attacks::get_rook_attacks_for_square(
-            king_square,
-            self.get_occupancy_for_side::<ATTACKER_WHITE>(),
-        ) & relevant_pieces;
-        let mut result = Bitboard::EMPTY;
+        let defender_occupancy = self.get_occupancy_for_side::<DEFENDER_WHITE>();
+        let attacker_occupancy = self.get_occupancy_for_side::<ATTACKER_WHITE>();
+        let queens = self.get_piece_mask_for_side::<ATTACKER_WHITE>(Piece::QUEEN);
+
+        let potential_pinners = Attacks::get_bishop_attacks_for_square(king_square, attacker_occupancy) & (self.get_piece_mask_for_side::<ATTACKER_WHITE>(Piece::BISHOP) | queens);
+
+        let mut diag_result = Bitboard::EMPTY;
         potential_pinners.map(|potential_pinner| {
             let ray = Rays::get_ray(king_square, potential_pinner);
-            if (ray & self.get_occupancy_for_side::<DEFENDER_WHITE>()).only_one_bit() {
-                result |= ray;
+            if (ray & defender_occupancy).only_one_bit() {
+                diag_result |= ray;
             }
         });
-        result
-    }
 
-    pub fn generate_diagonal_pins_mask<const DEFENDER_WHITE: bool, const ATTACKER_WHITE: bool>(
-        &self,
-    ) -> Bitboard {
-        let king_square = self.get_king_square::<DEFENDER_WHITE>();
-        let relevant_pieces = self.get_piece_mask_for_side::<ATTACKER_WHITE>(Piece::BISHOP)
-            | self.get_piece_mask_for_side::<ATTACKER_WHITE>(Piece::QUEEN);
-        let potential_pinners = Attacks::get_bishop_attacks_for_square(
-            king_square,
-            self.get_occupancy_for_side::<ATTACKER_WHITE>(),
-        ) & relevant_pieces;
-        let mut result = Bitboard::EMPTY;
+        let potential_pinners = Attacks::get_rook_attacks_for_square(king_square, attacker_occupancy) & (self.get_piece_mask_for_side::<ATTACKER_WHITE>(Piece::ROOK) | queens);
+        let mut orto_result = Bitboard::EMPTY;
         potential_pinners.map(|potential_pinner| {
             let ray = Rays::get_ray(king_square, potential_pinner);
-            if (ray & self.get_occupancy_for_side::<DEFENDER_WHITE>()).only_one_bit() {
-                result |= ray;
+            if (ray & defender_occupancy).only_one_bit() {
+                orto_result |= ray;
             }
         });
-        result
+
+        (diag_result, orto_result)
     }
 
     pub fn generate_attack_map<const DEFENDER_WHITE: bool, const ATTACKER_WHITE: bool>(

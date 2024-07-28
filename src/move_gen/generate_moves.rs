@@ -31,8 +31,7 @@ impl ChessBoard {
     ) {
         let attack_map = self.generate_attack_map::<STM_WHITE, NSTM_WHITE>();
         let king_square = self.get_king_square::<STM_WHITE>();
-        let diagonal_pins = self.generate_diagonal_pins_mask::<STM_WHITE, NSTM_WHITE>();
-        let ortographic_pins = self.generate_ortographic_pins_mask::<STM_WHITE, NSTM_WHITE>();
+        let (diagonal_pins, ortographic_pins) = self.generate_pin_masks::<STM_WHITE, NSTM_WHITE>();
         let checkers = if self.is_square_attacked_with_attack_map(king_square, attack_map) { 
             self.generate_checkers_mask::<STM_WHITE, NSTM_WHITE>() 
         } else { 

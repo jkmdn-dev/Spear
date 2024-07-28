@@ -141,16 +141,6 @@ impl ChessBoard {
 
         *board.state.get_half_move_counter_mut() = fen.half_move_counter.parse().unwrap();
 
-        if board.side_to_move() == Side::WHITE {
-            board.generate_checkers_mask::<true, false>();
-            board.generate_ortographic_pins_mask::<true, false>();
-            board.generate_diagonal_pins_mask::<true, false>();
-        } else {
-            board.generate_checkers_mask::<false, true>();
-            board.generate_ortographic_pins_mask::<false, true>();
-            board.generate_diagonal_pins_mask::<false, true>();
-        }
-
         move_history.push(board.get_key());
 
         board
