@@ -7,8 +7,8 @@ pub struct ChessBoardPieces {
 }
 impl ChessBoardPieces {
     #[inline]
-    pub fn get_occupancy_for_side(&self, side: Side) -> Bitboard {
-        self.occupancy[side.get_raw() as usize]
+    pub fn get_occupancy_for_side<const WHITE: bool>(&self) -> Bitboard {
+        self.occupancy[usize::from(WHITE)]
     }
 
     #[inline]
@@ -28,7 +28,7 @@ impl ChessBoardPieces {
 
     #[inline]
     pub fn get_piece_color_on_square(&self, square: Square) -> Side {
-        if self.get_occupancy_for_side(Side::WHITE).get_bit(square) {
+        if self.get_occupancy_for_side::<true>().get_bit(square) {
             Side::WHITE
         } else {
             Side::BLACK
@@ -36,32 +36,32 @@ impl ChessBoardPieces {
     }
 
     #[inline]
-    pub fn set_piece_on_square(&mut self, square: Square, side: Side, piece: Piece) {
+    pub fn set_piece_on_square<const WHITE: bool>(&mut self, square: Square, piece: Piece) {
         self.pieces[piece.get_raw() as usize].set_bit(square);
-        self.occupancy[side.get_raw() as usize].set_bit(square);
+        self.occupancy[usize::from(WHITE)].set_bit(square);
     }
 
     #[inline]
-    pub fn remove_piece_on_square(&mut self, square: Square, side: Side, piece: Piece) {
+    pub fn remove_piece_on_square<const WHITE: bool>(&mut self, square: Square, piece: Piece) {
         self.pieces[piece.get_raw() as usize].pop_bit(square);
-        self.occupancy[side.get_raw() as usize].pop_bit(square);
+        self.occupancy[usize::from(WHITE)].pop_bit(square);
     }
 }
 
 impl ChessBoard {
     #[inline]
     pub fn get_occupancy(&self) -> Bitboard {
-        self.get_occupancy_for_side(Side::WHITE) | self.get_occupancy_for_side(Side::BLACK)
+        self.get_occupancy_for_side::<true>() | self.get_occupancy_for_side::<false>()
     }
 
     #[inline]
-    pub fn get_occupancy_for_side(&self, side: Side) -> Bitboard {
-        self.pieces.get_occupancy_for_side(side)
+    pub fn get_occupancy_for_side<const WHITE: bool>(&self) -> Bitboard {
+        self.pieces.get_occupancy_for_side::<WHITE>()
     }
 
     #[inline]
-    pub fn get_piece_mask_for_side(&self, piece: Piece, side: Side) -> Bitboard {
-        self.get_piece_mask(piece) & self.get_occupancy_for_side(side)
+    pub fn get_piece_mask_for_side<const WHITE: bool>(&self, piece: Piece) -> Bitboard {
+        self.get_piece_mask(piece) & self.get_occupancy_for_side::<WHITE>()
     }
 
     #[inline]
@@ -70,9 +70,8 @@ impl ChessBoard {
     }
 
     #[inline]
-    pub fn get_king_square(&self, side: Side) -> Square {
-        self.get_piece_mask_for_side(Piece::KING, side)
-            .ls1b_square()
+    pub fn get_king_square<const WHITE: bool>(&self) -> Square {
+        self.get_piece_mask_for_side::<WHITE>(Piece::KING).ls1b_square()
     }
 
     #[inline]
@@ -86,18 +85,18 @@ impl ChessBoard {
     }
 
     #[inline]
-    pub fn set_piece_on_square(&mut self, square: Square, side: Side, piece: Piece) {
-        self.pieces.set_piece_on_square(square, side, piece);
+    pub fn set_piece_on_square<const WHITE: bool>(&mut self, square: Square, piece: Piece) {
+        self.pieces.set_piece_on_square::<WHITE>(square, piece);
         self.state
             .get_key_mut()
-            .update_piece_hash(piece, side, square)
+            .update_piece_hash::<WHITE>(piece, square)
     }
 
     #[inline]
-    pub fn remove_piece_on_square(&mut self, square: Square, side: Side, piece: Piece) {
-        self.pieces.remove_piece_on_square(square, side, piece);
+    pub fn remove_piece_on_square<const WHITE: bool>(&mut self, square: Square, piece: Piece) {
+        self.pieces.remove_piece_on_square::<WHITE>(square, piece);
         self.state
             .get_key_mut()
-            .update_piece_hash(piece, side, square)
+            .update_piece_hash::<WHITE>(piece, square)
     }
 }

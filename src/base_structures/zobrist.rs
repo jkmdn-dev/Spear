@@ -2,7 +2,7 @@ use std::fmt::{Display, Formatter, Result};
 
 use crate::{Piece, Square};
 
-use super::{CastleRight, Side};
+use super::CastleRight;
 
 #[derive(Copy, Clone, Default, PartialEq)]
 pub struct ZobristKey(u64);
@@ -10,8 +10,8 @@ impl ZobristKey {
     pub const NULL: Self = Self(0);
 
     #[inline]
-    pub(crate) fn update_piece_hash(&mut self, piece: Piece, side: Side, square: Square) {
-        self.0 ^= SEEDS[(usize::from(piece) + usize::from(side) * 6) * 64 + usize::from(square)];
+    pub(crate) fn update_piece_hash<const WHITE: bool>(&mut self, piece: Piece, square: Square) {
+        self.0 ^= SEEDS[(usize::from(piece) + usize::from(WHITE) * 6) * 64 + usize::from(square)];
     }
 
     #[inline]

@@ -71,12 +71,12 @@ impl ChessBoard {
         let pawns = self.get_piece_mask(Piece::PAWN).is_empty();
         let major_pieces =
             (self.get_piece_mask(Piece::ROOK) | self.get_piece_mask(Piece::QUEEN)).is_empty();
-        let white_minor_pieces = (self.get_piece_mask_for_side(Piece::KNIGHT, Side::WHITE)
-            | self.get_piece_mask_for_side(Piece::BISHOP, Side::WHITE))
+        let white_minor_pieces = (self.get_piece_mask_for_side::<true>(Piece::KNIGHT)
+            | self.get_piece_mask_for_side::<true>(Piece::BISHOP))
         .pop_count()
             < 2;
-        let black_minor_pieces = (self.get_piece_mask_for_side(Piece::KNIGHT, Side::BLACK)
-            | self.get_piece_mask_for_side(Piece::BISHOP, Side::BLACK))
+        let black_minor_pieces = (self.get_piece_mask_for_side::<false>(Piece::KNIGHT)
+            | self.get_piece_mask_for_side::<false>(Piece::BISHOP))
         .pop_count()
             < 2;
         pawns && major_pieces && white_minor_pieces && black_minor_pieces

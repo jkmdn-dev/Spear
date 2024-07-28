@@ -3,10 +3,10 @@ use crate::{attacks::{Attacks, Rays}, base_structures::Side, Bitboard, CastleRig
 use super::MoveGen;
 
 impl MoveGen {
-    pub fn generate_king_moves<F: FnMut(Move), const CAPTURE_ONLY: bool>(board: &ChessBoard, attack_map: Bitboard, king_square: Square, method: &mut F) {
+    pub fn generate_king_moves<F: FnMut(Move), const CAPTURE_ONLY: bool, const NSTM_WHITE: bool>(board: &ChessBoard, attack_map: Bitboard, king_square: Square, method: &mut F) {
         let move_mask = Attacks::get_king_attacks_for_square(king_square) & !attack_map;
 
-        (move_mask & board.get_occupancy_for_side(board.side_to_move().flipped())).map(|square| {
+        (move_mask & board.get_occupancy_for_side::<NSTM_WHITE>()).map(|square| {
             method(Move::from_squares(king_square, square, MoveFlag::CAPTURE))
         });
 

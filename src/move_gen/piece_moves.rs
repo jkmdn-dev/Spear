@@ -7,11 +7,11 @@ impl MoveGen {
     pub const BISHOP: i8 = 1;
     pub const ROOK: i8 = 2;
 
-    pub fn generate_piece_moves<F: FnMut(Move), const CAPTURE_ONLY: bool, const PIECE_TYPE: i8>(board: &ChessBoard, push_map: Bitboard, capture_map: Bitboard, diagonal_pins: Bitboard, ortographic_pins: Bitboard, method: &mut F) {
+    pub fn generate_piece_moves<F: FnMut(Move), const CAPTURE_ONLY: bool, const PIECE_TYPE: i8, const STM_WHITE: bool>(board: &ChessBoard, push_map: Bitboard, capture_map: Bitboard, diagonal_pins: Bitboard, ortographic_pins: Bitboard, method: &mut F) {
         let pieces = match PIECE_TYPE {
-            MoveGen::KNIGHT => board.get_piece_mask_for_side(Piece::KNIGHT, board.side_to_move()) & !diagonal_pins & !ortographic_pins,
-            MoveGen::BISHOP => (board.get_piece_mask_for_side(Piece::BISHOP, board.side_to_move()) | board.get_piece_mask_for_side(Piece::QUEEN, board.side_to_move())) & !ortographic_pins,
-            MoveGen::ROOK => (board.get_piece_mask_for_side(Piece::ROOK, board.side_to_move()) | board.get_piece_mask_for_side(Piece::QUEEN, board.side_to_move()))  & !diagonal_pins,
+            MoveGen::KNIGHT => board.get_piece_mask_for_side::<STM_WHITE>(Piece::KNIGHT) & !diagonal_pins & !ortographic_pins,
+            MoveGen::BISHOP => (board.get_piece_mask_for_side::<STM_WHITE>(Piece::BISHOP) | board.get_piece_mask_for_side::<STM_WHITE>(Piece::QUEEN)) & !ortographic_pins,
+            MoveGen::ROOK => (board.get_piece_mask_for_side::<STM_WHITE>(Piece::ROOK) | board.get_piece_mask_for_side::<STM_WHITE>(Piece::QUEEN))  & !diagonal_pins,
             _ => unreachable!()
         };
 

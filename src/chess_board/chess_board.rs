@@ -39,23 +39,30 @@ impl ChessBoard {
                     continue;
                 }
 
-                let mut side_to_move = Side::WHITE;
-                if piece_char > 'a' {
-                    side_to_move = Side::BLACK;
-                }
-
-                if piece_char == 'p' || piece_char == 'P' {
-                    board.set_piece_on_square(square, side_to_move, Piece::PAWN)
-                } else if piece_char == 'n' || piece_char == 'N' {
-                    board.set_piece_on_square(square, side_to_move, Piece::KNIGHT)
-                } else if piece_char == 'b' || piece_char == 'B' {
-                    board.set_piece_on_square(square, side_to_move, Piece::BISHOP)
-                } else if piece_char == 'r' || piece_char == 'R' {
-                    board.set_piece_on_square(square, side_to_move, Piece::ROOK)
-                } else if piece_char == 'q' || piece_char == 'Q' {
-                    board.set_piece_on_square(square, side_to_move, Piece::QUEEN)
-                } else if piece_char == 'k' || piece_char == 'K' {
-                    board.set_piece_on_square(square, side_to_move, Piece::KING)
+                if piece_char == 'P' {
+                    board.set_piece_on_square::<true>(square, Piece::PAWN)
+                } else if piece_char == 'N' {
+                    board.set_piece_on_square::<true>(square, Piece::KNIGHT)
+                } else if piece_char == 'B' {
+                    board.set_piece_on_square::<true>(square, Piece::BISHOP)
+                } else if piece_char == 'R' {
+                    board.set_piece_on_square::<true>(square, Piece::ROOK)
+                } else if piece_char == 'Q' {
+                    board.set_piece_on_square::<true>(square, Piece::QUEEN)
+                } else if piece_char == 'K' {
+                    board.set_piece_on_square::<true>(square, Piece::KING)
+                } else if piece_char == 'p' {
+                    board.set_piece_on_square::<false>(square, Piece::PAWN)
+                } else if piece_char == 'n' {
+                    board.set_piece_on_square::<false>(square, Piece::KNIGHT)
+                } else if piece_char == 'b' {
+                    board.set_piece_on_square::<false>(square, Piece::BISHOP)
+                } else if piece_char == 'r' {
+                    board.set_piece_on_square::<false>(square, Piece::ROOK)
+                } else if piece_char == 'q' {
+                    board.set_piece_on_square::<false>(square, Piece::QUEEN)
+                } else if piece_char == 'k' {
+                    board.set_piece_on_square::<false>(square, Piece::KING)
                 }
 
                 index += 1;
@@ -70,8 +77,8 @@ impl ChessBoard {
             board.state.get_key_mut().update_side_to_move_hash();
         }
 
-        let king_square = board.get_king_square(board.side_to_move().flipped());
-        if board.is_square_attacked(king_square, board.side_to_move()) {
+        let king_square = if board.side_to_move() == Side::WHITE { board.get_king_square::<true>() } else { board.get_king_square::<false>() };
+        if if board.side_to_move() == Side::WHITE { board.is_square_attacked::<true, false>(king_square) } else {  board.is_square_attacked::<false, true>(king_square) } {
             print!("Illegal position!\n");
             return Self {
                 pieces: ChessBoardPieces::default(),
@@ -131,9 +138,15 @@ impl ChessBoard {
 
         *board.state.get_half_move_counter_mut() = fen.half_move_counter.parse().unwrap();
 
-        board.generate_checkers_mask();
-        board.generate_ortographic_pins_mask();
-        board.generate_diagonal_pins_mask();
+        if board.side_to_move() == Side::WHITE {
+            board.generate_checkers_mask::<true, false>();
+            board.generate_ortographic_pins_mask::<true, false>();
+            board.generate_diagonal_pins_mask::<true, false>();
+        } else {
+            board.generate_checkers_mask::<false, true>();
+            board.generate_ortographic_pins_mask::<false, true>();
+            board.generate_diagonal_pins_mask::<false, true>();
+        }
 
         board.move_history = [ZobristKey::default(); 100];
         board.move_history[board.half_move_counter() as usize] = board.get_key();
@@ -241,7 +254,7 @@ impl ChessBoard {
         info.push(en_passant.as_str());
         let half_moves = format!("Half Moves: {}", self.half_move_counter());
         info.push(half_moves.as_str());
-        let in_check = format!("In Check: {}", self.is_in_check());
+        let in_check = format!("In Check: {}", if self.side_to_move() == Side::WHITE { self.is_in_check::<true, false>() } else { self.is_in_check::<false, true>() });
         info.push(in_check.as_str());
         let xxx = format!("");
         info.push(xxx.as_str());

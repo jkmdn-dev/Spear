@@ -1,6 +1,5 @@
 use crate::{
     attacks::{Attacks, Rays},
-    base_structures::Side,
     Bitboard, ChessBoard, Piece,
 };
 
@@ -10,64 +9,61 @@ pub struct ChessBoardMasks {
 
 impl ChessBoard {
     #[inline]
-    pub fn is_in_check(&self) -> bool {
-        self.is_square_attacked(self.get_king_square(self.side_to_move()), self.side_to_move().flipped())
+    pub fn is_in_check<const DEFENDER_WHITE: bool, const ATTACKER_WHITE: bool>(&self) -> bool {
+        self.is_square_attacked::<DEFENDER_WHITE, ATTACKER_WHITE>(self.get_king_square::<DEFENDER_WHITE>())
     }
 
     #[inline]
-    pub fn generate_checkers_mask(&self) -> Bitboard {
-        self.all_attackers_to_square(
+    pub fn generate_checkers_mask<const DEFENDER_WHITE: bool, const ATTACKER_WHITE: bool>(&self) -> Bitboard {
+        self.all_attackers_to_square::<DEFENDER_WHITE, ATTACKER_WHITE>(
             self.get_occupancy(),
-            self.get_king_square(self.side_to_move()),
-            self.side_to_move().flipped(),
+            self.get_king_square::<DEFENDER_WHITE>()
         )
     }
 
-    pub fn generate_ortographic_pins_mask(&self) -> Bitboard {
-        let attacker_color = self.side_to_move().flipped();
-        let king_square = self.get_king_square(self.side_to_move());
-        let relevant_pieces = self.get_piece_mask_for_side(Piece::ROOK, attacker_color)
-            | self.get_piece_mask_for_side(Piece::QUEEN, attacker_color);
+    pub fn generate_ortographic_pins_mask<const DEFENDER_WHITE: bool, const ATTACKER_WHITE: bool>(&self) -> Bitboard {
+        let king_square = self.get_king_square::<DEFENDER_WHITE>();
+        let relevant_pieces = self.get_piece_mask_for_side::<ATTACKER_WHITE>(Piece::ROOK)
+            | self.get_piece_mask_for_side::<ATTACKER_WHITE>(Piece::QUEEN);
         let potential_pinners = Attacks::get_rook_attacks_for_square(
             king_square,
-            self.get_occupancy_for_side(attacker_color),
+            self.get_occupancy_for_side::<ATTACKER_WHITE>(),
         ) & relevant_pieces;
         let mut result = Bitboard::EMPTY;
         potential_pinners.map(|potential_pinner| {
             let ray = Rays::get_ray(king_square, potential_pinner);
-            if (ray & self.get_occupancy_for_side(self.side_to_move())).only_one_bit() {
+            if (ray & self.get_occupancy_for_side::<DEFENDER_WHITE>()).only_one_bit() {
                 result |= ray;
             }
         });
         result
     }
 
-    pub fn generate_diagonal_pins_mask(&self) -> Bitboard {
-        let attacker_color = self.side_to_move().flipped();
-        let king_square = self.get_king_square(self.side_to_move());
-        let relevant_pieces = self.get_piece_mask_for_side(Piece::BISHOP, attacker_color)
-            | self.get_piece_mask_for_side(Piece::QUEEN, attacker_color);
+    pub fn generate_diagonal_pins_mask<const DEFENDER_WHITE: bool, const ATTACKER_WHITE: bool>(&self) -> Bitboard {
+        let king_square = self.get_king_square::<DEFENDER_WHITE>();
+        let relevant_pieces = self.get_piece_mask_for_side::<ATTACKER_WHITE>(Piece::BISHOP)
+            | self.get_piece_mask_for_side::<ATTACKER_WHITE>(Piece::QUEEN);
         let potential_pinners = Attacks::get_bishop_attacks_for_square(
             king_square,
-            self.get_occupancy_for_side(attacker_color),
+            self.get_occupancy_for_side::<ATTACKER_WHITE>(),
         ) & relevant_pieces;
         let mut result = Bitboard::EMPTY;
         potential_pinners.map(|potential_pinner| {
             let ray = Rays::get_ray(king_square, potential_pinner);
-            if (ray & self.get_occupancy_for_side(self.side_to_move())).only_one_bit() {
+            if (ray & self.get_occupancy_for_side::<DEFENDER_WHITE>()).only_one_bit() {
                 result |= ray;
             }
         });
         result
     }
 
-    pub fn generate_attack_map(&self, attacker_side: Side) -> Bitboard {
+    pub fn generate_attack_map<const DEFENDER_WHITE: bool, const ATTACKER_WHITE: bool>(&self) -> Bitboard {
         let mut threats = Bitboard::EMPTY;
 
-        let king_square = self.get_king_square(attacker_side.flipped());
+        let king_square = self.get_king_square::<DEFENDER_WHITE>();
         let occupancy = self.get_occupancy() ^ king_square.get_bit();
 
-        let attacker_pieces = self.get_occupancy_for_side(attacker_side);
+        let attacker_pieces = self.get_occupancy_for_side::<ATTACKER_WHITE>();
         let queens = self.get_piece_mask(Piece::QUEEN);
 
         (attacker_pieces & (self.get_piece_mask(Piece::ROOK) | queens)).map(|rook_square| {
@@ -85,7 +81,7 @@ impl ChessBoard {
             .map(|knight_square| threats |= Attacks::get_knight_attacks_for_square(knight_square));
 
         (attacker_pieces & self.get_piece_mask(Piece::PAWN)).map(|pawn_square| {
-            threats |= Attacks::get_pawn_attacks_for_square(pawn_square, attacker_side)
+            threats |= Attacks::get_pawn_attacks_for_square::<ATTACKER_WHITE>(pawn_square)
         });
 
         threats
