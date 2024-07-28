@@ -267,7 +267,7 @@ fn handle_en_passant<F: FnMut(Move), const STM_WHITE: bool, const NSTM_WHITE: bo
         let mut board_copy = *board;
         let new_mv =
             Move::from_squares(pawn_square, board.en_passant_square(), MoveFlag::EN_PASSANT);
-        board_copy.make_move(new_mv, &mut MoveHistory::new());
+        board_copy.make_move::<STM_WHITE, NSTM_WHITE>(new_mv, &mut MoveHistory::new());
 
         let king_square = board_copy.get_king_square::<STM_WHITE>();
         if !board_copy.is_square_attacked::<STM_WHITE, NSTM_WHITE>(king_square) {

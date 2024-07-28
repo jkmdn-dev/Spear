@@ -4,23 +4,9 @@ use crate::{
 };
 
 impl ChessBoard {
-    pub fn make_move(&mut self, mv: Move, move_history: &mut MoveHistory) {
-        self.make_move_stm(mv, mv.get_from_square(), mv.get_to_square(), move_history)
-    }
-
     #[inline]
-    fn make_move_stm(
-        &mut self,
-        mv: Move,
-        from_square: Square,
-        to_square: Square,
-        move_history: &mut MoveHistory,
-    ) {
-        if self.side_to_move() == Side::WHITE {
-            self.make_move_move_flag::<true, false>(mv, from_square, to_square, move_history)
-        } else {
-            self.make_move_move_flag::<false, true>(mv, from_square, to_square, move_history)
-        }
+    pub fn make_move<const STM_WHITE: bool, const NSTM_WHITE: bool>(&mut self, mv: Move, move_history: &mut MoveHistory) {
+        self.make_move_move_flag::<STM_WHITE, NSTM_WHITE>(mv, mv.get_from_square(), mv.get_to_square(), move_history)
     }
 
     #[inline]

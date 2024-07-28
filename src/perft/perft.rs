@@ -1,6 +1,6 @@
 use std::time::Instant;
 
-use crate::{ChessBoard, MoveHistory, FEN};
+use crate::{base_structures::Side, ChessBoard, MoveHistory, FEN};
 
 pub struct Perft;
 impl Perft {
@@ -21,7 +21,7 @@ impl Perft {
         }
 
         let timer = Instant::now();
-        let result = perft_internal::<BULK, SPLIT, PRINT>(&board, depth, true);
+        let result = if board.side_to_move() == Side::WHITE { perft_internal::<BULK, SPLIT, PRINT, true, false>(&board, depth, true) } else { perft_internal::<BULK, SPLIT, PRINT, false, true>(&board, depth, true) };
         let duration = timer.elapsed().as_millis();
 
         if PRINT {
@@ -39,7 +39,7 @@ impl Perft {
     }
 }
 
-fn perft_internal<const BULK: bool, const SPLIT: bool, const PRINT: bool>(
+fn perft_internal<const BULK: bool, const SPLIT: bool, const PRINT: bool, const STM_WHITE: bool, const NSTM_WHITE: bool>(
     board: &ChessBoard,
     depth: u8,
     first: bool,
@@ -59,8 +59,8 @@ fn perft_internal<const BULK: bool, const SPLIT: bool, const PRINT: bool>(
 
     board.map_moves(|mv| {
         let mut board_copy = *board;
-        board_copy.make_move(mv, &mut MoveHistory::new());
-        let result = perft_internal::<BULK, SPLIT, PRINT>(&board_copy, depth - 1, false);
+        board_copy.make_move::<STM_WHITE, NSTM_WHITE>(mv, &mut MoveHistory::new());
+        let result = perft_internal::<BULK, SPLIT, PRINT, NSTM_WHITE, STM_WHITE>(&board_copy, depth - 1, false);
         node_count += result;
 
         if SPLIT && PRINT && first {
