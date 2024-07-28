@@ -3,6 +3,12 @@ name = "spear"
 version = "0.1.0"
 edition = "2021"
 
+[profile.release]
+panic = 'abort'
+strip = true
+lto = true
+codegen-units = 1
+
 [dependencies]
 colored = "*"
 once_cell = "1.10.0"
