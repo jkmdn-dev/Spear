@@ -1,5 +1,5 @@
 use crate::{
-    base_structures::{Move, Side},
+    base_structures::Move,
     CastleRight, ChessBoard, MoveFlag, MoveHistory, Piece, Square,
 };
 

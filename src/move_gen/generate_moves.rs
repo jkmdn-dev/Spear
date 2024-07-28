@@ -1,23 +1,15 @@
-use crate::{attacks::Rays, base_structures::Side, Bitboard, ChessBoard, Move};
+use crate::{attacks::Rays, Bitboard, ChessBoard, Move};
 
 pub struct MoveGen;
 impl ChessBoard {
     #[inline]
-    pub fn map_moves<F: FnMut(Move)>(&self, mut method: F) {
-        if self.side_to_move() == Side::WHITE {
-            Self::map_moves_internal::<F, false, true, false>(&self, &mut method)
-        } else {
-            Self::map_moves_internal::<F, false, false, true>(&self, &mut method)
-        }
+    pub fn map_moves<F: FnMut(Move), const STM_WHITE: bool, const NSTM_WHITE: bool>(&self, mut method: F) {
+        Self::map_moves_internal::<F, false, STM_WHITE, NSTM_WHITE>(&self, &mut method)
     }
 
     #[inline]
-    pub fn map_captures<F: FnMut(Move)>(&self, mut method: F) {
-        if self.side_to_move() == Side::WHITE {
-            Self::map_moves_internal::<F, true, true, false>(&self, &mut method)
-        } else {
-            Self::map_moves_internal::<F, true, false, true>(&self, &mut method)
-        }
+    pub fn map_captures<F: FnMut(Move), const STM_WHITE: bool, const NSTM_WHITE: bool>(&self, mut method: F) {
+        Self::map_moves_internal::<F, true, STM_WHITE, NSTM_WHITE>(&self, &mut method)
     }
 
     fn map_moves_internal<
