@@ -20,7 +20,7 @@ impl Attacks {
 
     #[inline]
     pub fn get_pawn_attacks_for_square<const WHITE: bool>(square: Square) -> Bitboard {
-        PawnsAttacks::ATTACK_TABLE[usize::from(WHITE)][square.get_raw() as usize]
+        PawnsAttacks::ATTACK_TABLE[1-usize::from(WHITE)][square.get_raw() as usize]
     }
 
     #[inline]

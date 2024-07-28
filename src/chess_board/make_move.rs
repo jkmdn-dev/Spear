@@ -64,6 +64,7 @@ impl ChessBoard {
             Piece::BISHOP => self.make_move_internal::<STM_WHITE, NSTM_WHITE, MOVE_FLAG, MOVED_PIECE, { BISHOP }>(mv, from_square, to_square),
             Piece::ROOK => self.make_move_internal::<STM_WHITE, NSTM_WHITE, MOVE_FLAG, MOVED_PIECE, { ROOK }>(mv, from_square, to_square),
             Piece::QUEEN => self.make_move_internal::<STM_WHITE, NSTM_WHITE, MOVE_FLAG, MOVED_PIECE, { QUEEN }>(mv, from_square, to_square),
+            Piece::NONE => self.make_move_internal::<STM_WHITE, NSTM_WHITE, MOVE_FLAG, MOVED_PIECE, { NONE }>(mv, from_square, to_square),
             _ => unreachable!()
         }
     }
