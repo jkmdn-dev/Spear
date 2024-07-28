@@ -196,7 +196,9 @@ impl ChessBoard {
         }
 
         self.remove_piece_on_square::<STM_WHITE>(from_square, Piece::from_raw(MOVED_PIECE));
-        self.set_piece_on_square::<STM_WHITE>(to_square, Piece::from_raw(MOVED_PIECE));
+        if MOVE_FLAG < MoveFlag::KNIGHT_PROMOTION {
+            self.set_piece_on_square::<STM_WHITE>(to_square, Piece::from_raw(MOVED_PIECE));
+        }
 
         if MOVED_PIECE == PAWN || MOVE_FLAG & MoveFlag::CAPTURE > 0 {
             *self.state.get_half_move_counter_mut() = 0;
@@ -249,7 +251,6 @@ impl ChessBoard {
             }
             MoveFlag::KNIGHT_PROMOTION.. => {
                 let promotion_piece = mv.get_promotion_piece();
-                self.remove_piece_on_square::<STM_WHITE>(to_square, Piece::PAWN);
                 self.set_piece_on_square::<STM_WHITE>(to_square, promotion_piece);
             }
             _ => {}
