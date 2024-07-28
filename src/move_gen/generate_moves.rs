@@ -37,7 +37,7 @@ impl ChessBoard {
             let push_map = !self.get_occupancy();
             let capture_map = self.get_occupancy_for_side::<NSTM_WHITE>();
 
-            MoveGen::generate_pawn_moves::<F, STM_WHITE, NSTM_WHITE, CAPTURE_ONLY>(self, push_map, capture_map, diagonal_pins, ortographic_pins, method);
+            MoveGen::generate_pawn_moves::<F, STM_WHITE, NSTM_WHITE, CAPTURE_ONLY>(self, push_map, capture_map, diagonal_pins, ortographic_pins, attack_map, method);
             MoveGen::generate_piece_moves::<F, CAPTURE_ONLY, { MoveGen::KNIGHT }, STM_WHITE>(self, push_map, capture_map, diagonal_pins, ortographic_pins, method);
             MoveGen::generate_piece_moves::<F, CAPTURE_ONLY, { MoveGen::BISHOP }, STM_WHITE>(self, push_map, capture_map, diagonal_pins, ortographic_pins, method);
             MoveGen::generate_piece_moves::<F, CAPTURE_ONLY, { MoveGen::ROOK }, STM_WHITE>(self, push_map, capture_map, diagonal_pins, ortographic_pins, method);
@@ -45,7 +45,7 @@ impl ChessBoard {
             let checker = checkers.ls1b_square();
             let push_map = Rays::get_ray(king_square, checker).exclude(checker);
             
-            MoveGen::generate_pawn_moves::<F, STM_WHITE, NSTM_WHITE, CAPTURE_ONLY>(self, push_map, checkers, diagonal_pins, ortographic_pins, method);
+            MoveGen::generate_pawn_moves::<F, STM_WHITE, NSTM_WHITE, CAPTURE_ONLY>(self, push_map, checkers, diagonal_pins, ortographic_pins, attack_map, method);
             MoveGen::generate_piece_moves::<F, CAPTURE_ONLY, { MoveGen::KNIGHT }, STM_WHITE>(self, push_map, checkers, diagonal_pins, ortographic_pins, method);
             MoveGen::generate_piece_moves::<F, CAPTURE_ONLY, { MoveGen::BISHOP }, STM_WHITE>(self, push_map, checkers, diagonal_pins, ortographic_pins, method);
             MoveGen::generate_piece_moves::<F, CAPTURE_ONLY, { MoveGen::ROOK }, STM_WHITE>(self, push_map, checkers, diagonal_pins, ortographic_pins, method);

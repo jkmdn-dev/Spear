@@ -65,4 +65,9 @@ impl ChessBoard {
     pub fn is_square_attacked<const DEFENDER_WHITE: bool, const ATTACKER_WHITE: bool>(&self, square: Square) -> bool {
         self.is_square_attacked_with_occupancy::<DEFENDER_WHITE, ATTACKER_WHITE>(square, self.get_occupancy())
     }
+
+    #[inline]
+    pub fn is_square_attacked_with_attack_map(&self, square: Square, attack_map: Bitboard) -> bool {
+        attack_map.get_bit(square)
+    }
 }

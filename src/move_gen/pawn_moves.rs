@@ -3,7 +3,7 @@ use crate::{attacks::Attacks, Bitboard, ChessBoard, Move, MoveFlag, Piece, Squar
 use super::MoveGen;
 
 impl MoveGen {
-    pub fn generate_pawn_moves<F: FnMut(Move), const STM_WHITE: bool, const NSTM_WHITE: bool, const CAPTURE_ONLY: bool>(board: &ChessBoard, push_map: Bitboard, capture_map: Bitboard, diagonal_pins: Bitboard, ortographic_pins: Bitboard, method: &mut F) {
+    pub fn generate_pawn_moves<F: FnMut(Move), const STM_WHITE: bool, const NSTM_WHITE: bool, const CAPTURE_ONLY: bool>(board: &ChessBoard, push_map: Bitboard, capture_map: Bitboard, diagonal_pins: Bitboard, ortographic_pins: Bitboard, attack_map: Bitboard, method: &mut F) {
         let promotion_rank = Bitboard::RANK_7 >> (board.side_to_move().get_raw() * 40) as u32;
         let double_push_rank = Bitboard::RANK_2 << (board.side_to_move().get_raw() * 40) as u32;
         let pawns = board.get_piece_mask_for_side::<STM_WHITE>(Piece::PAWN);
@@ -14,7 +14,7 @@ impl MoveGen {
         handle_pawn_captures::<F, STM_WHITE>(attack_pawns, capture_map, diagonal_pins, promotion_rank, method);
 
         if board.en_passant_square() != Square::NULL {
-            handle_en_passant::<F, STM_WHITE, NSTM_WHITE>(board, attack_pawns, method)
+            handle_en_passant::<F, STM_WHITE, NSTM_WHITE>(board, attack_pawns, attack_map, method)
         }
 
         if CAPTURE_ONLY {
@@ -109,7 +109,7 @@ fn handle_pawn_captures<F: FnMut(Move), const STM_WHITE: bool>(attack_pawns: Bit
     });
 }
 
-fn handle_en_passant<F: FnMut(Move), const STM_WHITE: bool, const NSTM_WHITE: bool>(board: &ChessBoard, attack_pawns: Bitboard, method: &mut F) { 
+fn handle_en_passant<F: FnMut(Move), const STM_WHITE: bool, const NSTM_WHITE: bool>(board: &ChessBoard, attack_pawns: Bitboard, attack_map: Bitboard, method: &mut F) { 
     let pawns = Attacks::get_pawn_attacks_for_square::<NSTM_WHITE>(board.en_passant_square()) & attack_pawns;
 
     pawns.map(|pawn_square| {
@@ -118,7 +118,7 @@ fn handle_en_passant<F: FnMut(Move), const STM_WHITE: bool, const NSTM_WHITE: bo
         board_copy.make_move(new_mv);
 
         let king_square = board_copy.get_king_square::<STM_WHITE>();
-        if !board_copy.is_square_attacked::<STM_WHITE, NSTM_WHITE>(king_square) {
+        if !board_copy.is_square_attacked_with_attack_map(king_square, attack_map) {
             method(new_mv);
         }
     });
