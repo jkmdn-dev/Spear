@@ -54,7 +54,7 @@ fn main() {
     let mut nodes = 0u128;
     let mut duration = 0u128;
 
-    for _ in 0..2 {
+    for _ in 0..4 {
         for fen in &fens {
             let (result_nodes, result_duration) =
                 Perft::perft::<false, false, false>(&fen.0, fen.2);

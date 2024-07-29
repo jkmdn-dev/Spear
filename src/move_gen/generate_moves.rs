@@ -39,7 +39,7 @@ impl ChessBoard {
 
         if checkers.is_empty() {
             if !CAPTURE_ONLY {
-                MoveGen::generate_castle_moves(self, attack_map, king_square, method)
+                MoveGen::generate_castle_moves::<F, STM_WHITE>(self, attack_map, king_square, method)
             }
 
             let push_map = !self.get_occupancy();

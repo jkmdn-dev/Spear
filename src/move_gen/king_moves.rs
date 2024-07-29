@@ -1,6 +1,5 @@
 use crate::{
     attacks::{Attacks, Rays},
-    base_structures::Side,
     Bitboard, CastleRight, ChessBoard, Move, MoveFlag, Square,
 };
 
@@ -31,7 +30,7 @@ impl MoveGen {
         });
     }
 
-    pub fn generate_castle_moves<F: FnMut(Move)>(
+    pub fn generate_castle_moves<F: FnMut(Move), const STM_WHITE: bool>(
         board: &ChessBoard,
         attack_map: Bitboard,
         king_square: Square,
@@ -40,7 +39,7 @@ impl MoveGen {
         let king_side_destination = (king_square.get_bit() << 2).ls1b_square();
         let queen_side_destination = (king_square.get_bit() >> 2).ls1b_square();
 
-        if board.side_to_move() == Side::WHITE {
+        if STM_WHITE {
             let king_side_room = Rays::get_ray(
                 king_square,
                 Square::from_raw(CastleRight::ROOK_POSITIONS[1]).shift_right(1),
