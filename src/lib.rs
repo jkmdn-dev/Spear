@@ -26,4 +26,6 @@ pub use base_structures::FEN;
 #[allow(unused)]
 pub use chess_board::ChessBoard;
 #[allow(unused)]
+pub use chess_board::ChessPosition;
+#[allow(unused)]
 pub use perft::Perft;

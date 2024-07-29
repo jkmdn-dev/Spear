@@ -1,12 +1,13 @@
-use crate::{
-    base_structures::Move,
-    CastleRight, ChessBoard, MoveFlag, Piece, Square,
-};
+use crate::{base_structures::Move, CastleRight, ChessBoard, MoveFlag, Piece, Square};
 
 impl ChessBoard {
     #[inline]
     pub fn make_move<const STM_WHITE: bool, const NSTM_WHITE: bool>(&mut self, mv: Move) {
-        self.make_move_move_flag::<STM_WHITE, NSTM_WHITE>(mv, mv.get_from_square(), mv.get_to_square())
+        self.make_move_move_flag::<STM_WHITE, NSTM_WHITE>(
+            mv,
+            mv.get_from_square(),
+            mv.get_to_square(),
+        )
     }
 
     #[inline]
@@ -14,7 +15,7 @@ impl ChessBoard {
         &mut self,
         mv: Move,
         from_square: Square,
-        to_square: Square
+        to_square: Square,
     ) {
         match mv.get_flag() {
             MoveFlag::QUIET_MOVE => self.make_move_moved_piece::<STM_WHITE, NSTM_WHITE, { MoveFlag::QUIET_MOVE }>(mv, from_square, to_square),
@@ -44,7 +45,7 @@ impl ChessBoard {
         &mut self,
         mv: Move,
         from_square: Square,
-        to_square: Square
+        to_square: Square,
     ) {
         let moved_piece = self.get_piece_on_square(from_square);
         match moved_piece {
@@ -52,43 +53,43 @@ impl ChessBoard {
                 .make_move_captrued_piece::<STM_WHITE, NSTM_WHITE, MOVE_FLAG, { PAWN }>(
                     mv,
                     from_square,
-                    to_square
+                    to_square,
                 ),
             Piece::KNIGHT => self
                 .make_move_captrued_piece::<STM_WHITE, NSTM_WHITE, MOVE_FLAG, { KNIGHT }>(
                     mv,
                     from_square,
-                    to_square
+                    to_square,
                 ),
             Piece::BISHOP => self
                 .make_move_captrued_piece::<STM_WHITE, NSTM_WHITE, MOVE_FLAG, { BISHOP }>(
                     mv,
                     from_square,
-                    to_square
+                    to_square,
                 ),
             Piece::ROOK => self
                 .make_move_captrued_piece::<STM_WHITE, NSTM_WHITE, MOVE_FLAG, { ROOK }>(
                     mv,
                     from_square,
-                    to_square
+                    to_square,
                 ),
             Piece::QUEEN => self
                 .make_move_captrued_piece::<STM_WHITE, NSTM_WHITE, MOVE_FLAG, { QUEEN }>(
                     mv,
                     from_square,
-                    to_square
+                    to_square,
                 ),
             Piece::KING => self
                 .make_move_captrued_piece::<STM_WHITE, NSTM_WHITE, MOVE_FLAG, { KING }>(
                     mv,
                     from_square,
-                    to_square
+                    to_square,
                 ),
             Piece::NONE => self
                 .make_move_captrued_piece::<STM_WHITE, NSTM_WHITE, MOVE_FLAG, { NONE }>(
                     mv,
                     from_square,
-                    to_square
+                    to_square,
                 ),
             _ => unreachable!(),
         }
@@ -104,13 +105,13 @@ impl ChessBoard {
         &mut self,
         mv: Move,
         from_square: Square,
-        to_square: Square
+        to_square: Square,
     ) {
         if MOVE_FLAG & MoveFlag::CAPTURE == 0 {
             self.make_move_internal::<STM_WHITE, NSTM_WHITE, MOVE_FLAG, MOVED_PIECE, { NONE }>(
                 mv,
                 from_square,
-                to_square
+                to_square,
             );
             return;
         }
@@ -121,37 +122,37 @@ impl ChessBoard {
                 .make_move_internal::<STM_WHITE, NSTM_WHITE, MOVE_FLAG, MOVED_PIECE, { PAWN }>(
                     mv,
                     from_square,
-                    to_square
+                    to_square,
                 ),
             Piece::KNIGHT => self
                 .make_move_internal::<STM_WHITE, NSTM_WHITE, MOVE_FLAG, MOVED_PIECE, { KNIGHT }>(
                     mv,
                     from_square,
-                    to_square
+                    to_square,
                 ),
             Piece::BISHOP => self
                 .make_move_internal::<STM_WHITE, NSTM_WHITE, MOVE_FLAG, MOVED_PIECE, { BISHOP }>(
                     mv,
                     from_square,
-                    to_square
+                    to_square,
                 ),
             Piece::ROOK => self
                 .make_move_internal::<STM_WHITE, NSTM_WHITE, MOVE_FLAG, MOVED_PIECE, { ROOK }>(
                     mv,
                     from_square,
-                    to_square
+                    to_square,
                 ),
             Piece::QUEEN => self
                 .make_move_internal::<STM_WHITE, NSTM_WHITE, MOVE_FLAG, MOVED_PIECE, { QUEEN }>(
                     mv,
                     from_square,
-                    to_square
+                    to_square,
                 ),
             Piece::NONE => self
                 .make_move_internal::<STM_WHITE, NSTM_WHITE, MOVE_FLAG, MOVED_PIECE, { NONE }>(
                     mv,
                     from_square,
-                    to_square
+                    to_square,
                 ),
             _ => {
                 self.draw_board();
@@ -171,7 +172,7 @@ impl ChessBoard {
         &mut self,
         mv: Move,
         from_square: Square,
-        to_square: Square
+        to_square: Square,
     ) {
         if CAPTURED_PIECE != NONE {
             self.remove_piece_on_square::<NSTM_WHITE>(to_square, Piece::from_raw(CAPTURED_PIECE));
@@ -191,27 +192,13 @@ impl ChessBoard {
         let mut castle_rights = self.castle_rights().get_raw();
         castle_rights &= !(CastleRight::ROOK_MASKS[from_square.get_raw() as usize]
             | CastleRight::ROOK_MASKS[to_square.get_raw() as usize]);
-        let castle_rights_difference = self.castle_rights().get_raw() ^ castle_rights;
-        self.state
-            .get_key_mut()
-            .update_castle_rights_diff_hash(castle_rights_difference);
         *self.state.get_castle_rights_mut() = CastleRight::from_raw(castle_rights);
-
-        let en_passant_square = self.en_passant_square();
-        if en_passant_square != Square::NULL {
-            self.state
-                .get_key_mut()
-                .update_en_passant_hash(en_passant_square);
-        }
 
         *self.state.get_en_passant_mut() = Square::NULL;
 
         match MOVE_FLAG {
             MoveFlag::DOUBLE_PUSH => {
                 *self.state.get_en_passant_mut() = to_square ^ 8;
-                self.state
-                    .get_key_mut()
-                    .update_en_passant_hash(to_square ^ 8);
             }
             MoveFlag::KING_SIDE_CASTLE | MoveFlag::QUEEN_SIDE_CASTLE => {
                 let king_side = usize::from(MOVE_FLAG == MoveFlag::KING_SIDE_CASTLE);
@@ -238,7 +225,6 @@ impl ChessBoard {
         }
 
         self.state.get_side_to_move_mut().mut_flip();
-        self.state.get_key_mut().update_side_to_move_hash();
     }
 }
 

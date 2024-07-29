@@ -2,23 +2,20 @@ use colored::Colorize;
 
 use crate::{base_structures::Side, CastleRight, MoveHistory, Piece, Square, FEN};
 
-use super::{
-    chess_board_masks::ChessBoardMasks, chess_board_pieces::ChessBoardPieces,
-    chess_board_state::ChessBoardState,
-};
+use super::{chess_board_pieces::ChessBoardPieces, chess_board_state::ChessBoardState};
 
 #[derive(Clone, Copy, Default)]
 pub struct ChessBoard {
     pub(super) pieces: ChessBoardPieces,
-    pub(super) masks: ChessBoardMasks,
+    //pub(super) masks: ChessBoardMasks,
     pub(super) state: ChessBoardState,
 }
 
 impl ChessBoard {
-    pub fn from_fen(fen: &FEN, move_history: &mut MoveHistory) -> Self {
+    pub fn from_fen(fen: &FEN) -> Self {
         let mut board = Self {
             pieces: ChessBoardPieces::default(),
-            masks: ChessBoardMasks::default(),
+            //masks: ChessBoardMasks::default(),
             state: ChessBoardState::default(),
         };
 
@@ -69,7 +66,6 @@ impl ChessBoard {
             *board.state.get_side_to_move_mut() = Side::WHITE;
         } else {
             *board.state.get_side_to_move_mut() = Side::BLACK;
-            board.state.get_key_mut().update_side_to_move_hash();
         }
 
         let king_square = if board.side_to_move() == Side::WHITE {
@@ -86,7 +82,7 @@ impl ChessBoard {
             print!("Illegal position!\n");
             return Self {
                 pieces: ChessBoardPieces::default(),
-                masks: ChessBoardMasks::default(),
+                //masks: ChessBoardMasks::default(),
                 state: ChessBoardState::default(),
             };
         }
@@ -96,52 +92,33 @@ impl ChessBoard {
                 .state
                 .get_castle_rights_mut()
                 .set_right(CastleRight::WHITE_KING);
-            board
-                .state
-                .get_key_mut()
-                .update_castle_rights_hash(CastleRight::WHITE_KING);
         }
         if fen.castle_rights.contains('Q') {
             board
                 .state
                 .get_castle_rights_mut()
                 .set_right(CastleRight::WHITE_QUEEN);
-            board
-                .state
-                .get_key_mut()
-                .update_castle_rights_hash(CastleRight::WHITE_QUEEN);
         }
         if fen.castle_rights.contains('k') {
             board
                 .state
                 .get_castle_rights_mut()
                 .set_right(CastleRight::BLACK_KING);
-            board
-                .state
-                .get_key_mut()
-                .update_castle_rights_hash(CastleRight::BLACK_KING);
         }
         if fen.castle_rights.contains('q') {
             board
                 .state
                 .get_castle_rights_mut()
                 .set_right(CastleRight::BLACK_QUEEN);
-            board
-                .state
-                .get_key_mut()
-                .update_castle_rights_hash(CastleRight::BLACK_QUEEN);
         }
 
         *board.state.get_en_passant_mut() = Square::NULL;
         if fen.en_passant_square != "-" {
             let new_square = Square::from_string(&fen.en_passant_square);
             *board.state.get_en_passant_mut() = new_square;
-            board.state.get_key_mut().update_en_passant_hash(new_square);
         }
 
         *board.state.get_half_move_counter_mut() = fen.half_move_counter.parse().unwrap();
-
-        move_history.push(board.get_key());
 
         board
     }

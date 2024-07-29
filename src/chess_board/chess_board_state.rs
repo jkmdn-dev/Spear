@@ -43,7 +43,14 @@ impl ChessBoardState {
 impl ChessBoard {
     #[inline]
     pub fn get_key(&self) -> ZobristKey {
-        self.state.zobrist
+        let mut key = self.state.zobrist;
+
+        if self.en_passant_square() != Square::NULL {
+            key ^= ZobristKey::get_en_passant_seed(self.en_passant_square())
+        }
+
+        key ^ ZobristKey::get_castle_rights_seed(self.castle_rights().get_raw())
+            ^ (ZobristKey::get_side_to_move_seed() * self.side_to_move().get_raw() as u64)
     }
 
     #[inline]

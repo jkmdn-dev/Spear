@@ -39,9 +39,15 @@ fn main() {
         for (index, fen) in fens.clone().into_iter().enumerate() {
             let (result_nodes, result_duration) = Perft::perft::<true, false, false>(&fen.0, fen.1);
             if result_nodes != fen.3 {
-                println!("Perft {index} has failed in {result_duration}ms ({}nps)", result_nodes * 1000/result_duration);
+                println!(
+                    "Position {index} has failed in {result_duration}ms ({}nps)",
+                    result_nodes * 1000 / result_duration
+                );
             } else {
-                println!("Perft {index} has passed in {result_duration}ms ({}nps)", result_nodes * 1000/result_duration);
+                println!(
+                    "Position {index} has passed in {result_duration}ms ({}nps)",
+                    result_nodes * 1000 / result_duration
+                );
             }
 
             nodes += result_nodes;

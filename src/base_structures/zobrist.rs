@@ -1,13 +1,18 @@
-use std::fmt::{Display, Formatter, Result};
+use std::{
+    fmt::{Display, Formatter, Result},
+    ops::{BitXor, BitXorAssign},
+};
 
 use crate::{Piece, Square};
-
-use super::CastleRight;
 
 #[derive(Copy, Clone, Default, PartialEq)]
 pub struct ZobristKey(u64);
 impl ZobristKey {
     pub const NULL: Self = Self(0);
+
+    fn get_raw(&self) -> u64 {
+        self.0
+    }
 
     #[inline]
     pub(crate) fn update_piece_hash<const WHITE: bool>(&mut self, piece: Piece, square: Square) {
@@ -15,26 +20,50 @@ impl ZobristKey {
     }
 
     #[inline]
-    pub(crate) fn update_side_to_move_hash(&mut self) {
-        self.0 ^= SEEDS[768];
+    pub(crate) fn get_castle_rights_seed(mask: u8) -> u64 {
+        SEEDS[769 + mask as usize]
     }
 
     #[inline]
-    pub(crate) fn update_castle_rights_hash(&mut self, castle_right: CastleRight) {
-        self.0 ^= SEEDS[769 + castle_right.get_index()];
+    pub(crate) fn get_side_to_move_seed() -> u64 {
+        SEEDS[768]
     }
 
     #[inline]
-    pub(crate) fn update_castle_rights_diff_hash(&mut self, castle_rights_difference: u8) {
-        self.0 ^= SEEDS[769 + 0] * (castle_rights_difference & 1) as u64;
-        self.0 ^= SEEDS[769 + 1] * (castle_rights_difference >> 1 & 1) as u64;
-        self.0 ^= SEEDS[769 + 2] * (castle_rights_difference >> 2 & 1) as u64;
-        self.0 ^= SEEDS[769 + 3] * (castle_rights_difference >> 3 & 1) as u64;
+    pub(crate) fn get_en_passant_seed(square: Square) -> u64 {
+        SEEDS[785 + usize::from(square) % 8]
     }
+}
 
-    #[inline]
-    pub(crate) fn update_en_passant_hash(&mut self, square: Square) {
-        self.0 ^= SEEDS[773 + usize::from(square) % 8];
+impl BitXor for ZobristKey {
+    type Output = ZobristKey;
+
+    fn bitxor(self, rhs: ZobristKey) -> Self::Output {
+        Self {
+            0: self.get_raw() ^ rhs.get_raw(),
+        }
+    }
+}
+
+impl BitXorAssign for ZobristKey {
+    fn bitxor_assign(&mut self, rhs: ZobristKey) {
+        self.0 ^= rhs.get_raw()
+    }
+}
+
+impl BitXor<u64> for ZobristKey {
+    type Output = ZobristKey;
+
+    fn bitxor(self, rhs: u64) -> Self::Output {
+        Self {
+            0: self.get_raw() ^ rhs,
+        }
+    }
+}
+
+impl BitXorAssign<u64> for ZobristKey {
+    fn bitxor_assign(&mut self, rhs: u64) {
+        self.0 ^= rhs
     }
 }
 
@@ -44,7 +73,7 @@ impl Display for ZobristKey {
     }
 }
 
-const SEEDS: [u64; 781] = [
+const SEEDS: [u64; 793] = [
     6010607256382380006,
     386869187810051925,
     6942428122597393202,
@@ -826,4 +855,16 @@ const SEEDS: [u64; 781] = [
     7622299853667291963,
     4242718976879199086,
     4899758872716476522,
+    5342667280306397000,
+    9261808733997560000,
+    2838557871113892000,
+    15727569712734245000,
+    1251074832053235700,
+    11804267264389464643,
+    6607964684120781056,
+    4742494639028466021,
+    2755276855311089700,
+    7224224972951806000,
+    13322976826524058764,
+    10911771378663354087,
 ];
