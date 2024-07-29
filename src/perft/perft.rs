@@ -21,7 +21,7 @@ impl Perft {
         }
 
         let timer = Instant::now();
-        let result = if board.side_to_move() == Side::WHITE { perft_internal::<BULK, SPLIT, PRINT, true, false>(&board, depth, true) } else { perft_internal::<BULK, SPLIT, PRINT, false, true>(&board, depth, true) };
+        let result = if board.side_to_move() == Side::WHITE { perft_internal::<BULK, SPLIT, PRINT, true, true, false>(&board, depth) } else { perft_internal::<BULK, SPLIT, PRINT, true, false, true>(&board, depth) };
         let duration = timer.elapsed().as_millis();
 
         if PRINT {
@@ -39,10 +39,9 @@ impl Perft {
     }
 }
 
-fn perft_internal<const BULK: bool, const SPLIT: bool, const PRINT: bool, const STM_WHITE: bool, const NSTM_WHITE: bool>(
+fn perft_internal<const BULK: bool, const SPLIT: bool, const PRINT: bool, const FIRST: bool, const STM_WHITE: bool, const NSTM_WHITE: bool>(
     board: &ChessBoard,
-    depth: u8,
-    first: bool,
+    depth: u8
 ) -> u128 {
     let mut node_count = 0u128;
 
@@ -60,10 +59,10 @@ fn perft_internal<const BULK: bool, const SPLIT: bool, const PRINT: bool, const 
     board.map_moves::<_, STM_WHITE, NSTM_WHITE>(|mv| {
         let mut board_copy = *board;
         board_copy.make_move::<STM_WHITE, NSTM_WHITE>(mv);
-        let result = perft_internal::<BULK, SPLIT, PRINT, NSTM_WHITE, STM_WHITE>(&board_copy, depth - 1, false);
+        let result = perft_internal::<BULK, SPLIT, PRINT, false, NSTM_WHITE, STM_WHITE>(&board_copy, depth - 1);
         node_count += result;
 
-        if SPLIT && PRINT && first {
+        if SPLIT && PRINT && FIRST {
             println!("{mv} - {result}")
         }
     });
