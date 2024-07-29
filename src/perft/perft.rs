@@ -59,7 +59,7 @@ fn perft_internal<const BULK: bool, const SPLIT: bool, const PRINT: bool, const 
 
     board.map_moves::<_, STM_WHITE, NSTM_WHITE>(|mv| {
         let mut board_copy = *board;
-        board_copy.make_move::<STM_WHITE, NSTM_WHITE>(mv, &mut MoveHistory::new());
+        board_copy.make_move::<STM_WHITE, NSTM_WHITE>(mv);
         let result = perft_internal::<BULK, SPLIT, PRINT, NSTM_WHITE, STM_WHITE>(&board_copy, depth - 1, false);
         node_count += result;
 
