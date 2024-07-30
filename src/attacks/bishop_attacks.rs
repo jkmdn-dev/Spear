@@ -1,3 +1,6 @@
+#[cfg(target_feature = "bmi2")]
+use std::arch::x86_64::_pext_u64;
+
 use once_cell::sync::Lazy;
 
 use crate::{Bitboard, Square};
@@ -8,10 +11,16 @@ impl BishopAttacks {
     pub fn get_bishop_attacks(square: Square, occupancy: Bitboard) -> Bitboard {
         let square = usize::from(square);
 
+        #[cfg(not(target_feature = "bmi2"))]
         let index = ((occupancy & BISHOP_MASKS[square])
             .wrapping_mul(MAGIC_NUMBERS_BISHOP[square].into())
             >> (64 - BISHOP_OCCUPANCY_COUNT[square] as u32))
             .get_raw() as usize;
+
+        #[cfg(target_feature = "bmi2")]
+        let index = unsafe {
+            _pext_u64(occupancy.get_raw(), BISHOP_MASKS[square].get_raw()) as usize
+        };
 
         BISHOP_ATTACKS[square][index]
     }
@@ -27,6 +36,7 @@ const BISHOP_MASKS: [Bitboard; 64] = {
     result
 };
 
+#[cfg(not(target_feature = "bmi2"))]
 const BISHOP_OCCUPANCY_COUNT: [usize; 64] = {
     let mut result = [0; 64];
     let mut rank = 0;
@@ -51,11 +61,19 @@ static BISHOP_ATTACKS: Lazy<Vec<Vec<Bitboard>>> = Lazy::new(|| {
         let mut index = 0;
         while index < 1 << relevant_bit_count {
             let occupancy = generate_occupancy(index, relevant_bit_count as usize, attack_mask);
-            let magic_index = (occupancy
-                .wrapping_mul(MAGIC_NUMBERS_BISHOP[square.get_raw() as usize].into())
+
+            #[cfg(not(target_feature = "bmi2"))]
+            let attack_index = (occupancy
+                .wrapping_mul(MAGIC_NUMBERS_BISHOP[square_index as usize].into())
                 >> (64 - relevant_bit_count))
                 .get_raw() as usize;
-            result[square_index as usize][magic_index] = generate_bishop_attacks(square, occupancy);
+
+            #[cfg(target_feature = "bmi2")]
+            let attack_index = unsafe {
+                _pext_u64(occupancy.get_raw(), BISHOP_MASKS[square_index as usize].get_raw()) as usize
+            };
+    
+            result[square_index as usize][attack_index] = generate_bishop_attacks(square, occupancy);
             index += 1;
         }
     }
@@ -177,6 +195,7 @@ fn generate_occupancy(index: usize, bit_count: usize, attack_mask: Bitboard) -> 
     result
 }
 
+#[cfg(not(target_feature = "bmi2"))]
 const MAGIC_NUMBERS_BISHOP: [u64; 64] = [
     9300092178686681120,
     1284830893973760,
