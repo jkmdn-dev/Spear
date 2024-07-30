@@ -1,4 +1,4 @@
-use crate::{base_structures::Move, CastleRight, ChessBoard, MoveFlag, Piece, Square};
+use crate::{base_structures::Move, CastleRights, ChessBoard, MoveFlag, Piece, Square};
 
 impl ChessBoard {
     #[inline]
@@ -190,9 +190,9 @@ impl ChessBoard {
         }
 
         let mut castle_rights = self.castle_rights().get_raw();
-        castle_rights &= !(CastleRight::ROOK_MASKS[from_square.get_raw() as usize]
-            | CastleRight::ROOK_MASKS[to_square.get_raw() as usize]);
-        *self.state.get_castle_rights_mut() = CastleRight::from_raw(castle_rights);
+        castle_rights &= !(CastleRights::ROOK_MASKS[from_square.get_raw() as usize]
+            | CastleRights::ROOK_MASKS[to_square.get_raw() as usize]);
+        *self.state.get_castle_rights_mut() = CastleRights::from_raw(castle_rights);
 
         *self.state.get_en_passant_mut() = Square::NULL;
 
@@ -203,7 +203,7 @@ impl ChessBoard {
             MoveFlag::KING_SIDE_CASTLE | MoveFlag::QUEEN_SIDE_CASTLE => {
                 let king_side = usize::from(MOVE_FLAG == MoveFlag::KING_SIDE_CASTLE);
                 let side_flip = 56 * usize::from(!STM_WHITE) as u8;
-                let rook_from_square = side_flip + CastleRight::ROOK_POSITIONS[king_side];
+                let rook_from_square = side_flip + CastleRights::ROOK_POSITIONS[king_side];
                 let rook_to_square = side_flip + [3, 5][king_side];
                 self.remove_piece_on_square::<STM_WHITE>(
                     Square::from_raw(rook_from_square),

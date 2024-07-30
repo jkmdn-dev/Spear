@@ -1,6 +1,6 @@
 use colored::Colorize;
 
-use crate::{base_structures::Side, CastleRight, MoveHistory, Piece, Square, FEN};
+use crate::{base_structures::Side, CastleRights, Piece, Square, FEN};
 
 use super::{chess_board_pieces::ChessBoardPieces, chess_board_state::ChessBoardState};
 
@@ -91,25 +91,25 @@ impl ChessBoard {
             board
                 .state
                 .get_castle_rights_mut()
-                .set_right(CastleRight::WHITE_KING);
+                .set_right(CastleRights::WHITE_KING);
         }
         if fen.castle_rights.contains('Q') {
             board
                 .state
                 .get_castle_rights_mut()
-                .set_right(CastleRight::WHITE_QUEEN);
+                .set_right(CastleRights::WHITE_QUEEN);
         }
         if fen.castle_rights.contains('k') {
             board
                 .state
                 .get_castle_rights_mut()
-                .set_right(CastleRight::BLACK_KING);
+                .set_right(CastleRights::BLACK_KING);
         }
         if fen.castle_rights.contains('q') {
             board
                 .state
                 .get_castle_rights_mut()
-                .set_right(CastleRight::BLACK_QUEEN);
+                .set_right(CastleRights::BLACK_QUEEN);
         }
 
         *board.state.get_en_passant_mut() = Square::NULL;
@@ -169,16 +169,16 @@ impl ChessBoard {
         // Castling rights
         fen.push(' ');
         let mut castling_rights = String::new();
-        if self.castle_rights().has_right(CastleRight::WHITE_KING) {
+        if self.castle_rights().has_right(CastleRights::WHITE_KING) {
             castling_rights.push('K');
         }
-        if self.castle_rights().has_right(CastleRight::WHITE_QUEEN) {
+        if self.castle_rights().has_right(CastleRights::WHITE_QUEEN) {
             castling_rights.push('Q');
         }
-        if self.castle_rights().has_right(CastleRight::BLACK_KING) {
+        if self.castle_rights().has_right(CastleRights::BLACK_KING) {
             castling_rights.push('k');
         }
-        if self.castle_rights().has_right(CastleRight::BLACK_QUEEN) {
+        if self.castle_rights().has_right(CastleRights::BLACK_QUEEN) {
             castling_rights.push('q');
         }
         if castling_rights.is_empty() {

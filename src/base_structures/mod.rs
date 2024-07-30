@@ -10,7 +10,7 @@ mod square;
 mod zobrist;
 
 pub use bitboard::Bitboard;
-pub use castle_rights::CastleRight;
+pub use castle_rights::CastleRights;
 pub use fen_struct::FEN;
 pub use move_flags::MoveFlag;
 pub use move_history::MoveHistory;

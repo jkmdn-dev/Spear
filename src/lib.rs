@@ -10,7 +10,7 @@ pub use attacks::Attacks;
 #[allow(unused)]
 pub use base_structures::Bitboard;
 #[allow(unused)]
-pub use base_structures::CastleRight;
+pub use base_structures::CastleRights;
 #[allow(unused)]
 pub use base_structures::Move;
 #[allow(unused)]

@@ -1,8 +1,8 @@
 use std::fmt::{Display, Formatter, Result};
 
 #[derive(Copy, Clone, Default, PartialEq)]
-pub struct CastleRight(u8);
-impl CastleRight {
+pub struct CastleRights(u8);
+impl CastleRights {
     pub const WHITE_QUEEN: Self = Self(0b1000);
     pub const WHITE_KING: Self = Self(0b0100);
     pub const BLACK_QUEEN: Self = Self(0b0010);
@@ -28,18 +28,18 @@ impl CastleRight {
     }
 
     #[inline]
-    pub(crate) fn set_right(&mut self, right: CastleRight) {
+    pub(crate) fn set_right(&mut self, right: CastleRights) {
         self.0 |= right.0
     }
 
     #[inline]
     #[allow(unused)]
-    pub(crate) fn remove_right(&mut self, right: CastleRight) {
+    pub(crate) fn remove_right(&mut self, right: CastleRights) {
         self.0 &= !right.0
     }
 
     #[inline]
-    pub fn has_right(&self, right: CastleRight) -> bool {
+    pub fn has_right(&self, right: CastleRights) -> bool {
         self.0 & right.0 > 0
     }
 
@@ -55,16 +55,16 @@ impl CastleRight {
 
     pub fn to_string(&self) -> String {
         let mut rights = "".to_string();
-        if self.has_right(CastleRight::WHITE_KING) {
+        if self.has_right(CastleRights::WHITE_KING) {
             rights += "K";
         }
-        if self.has_right(CastleRight::WHITE_QUEEN) {
+        if self.has_right(CastleRights::WHITE_QUEEN) {
             rights += "Q";
         }
-        if self.has_right(CastleRight::BLACK_KING) {
+        if self.has_right(CastleRights::BLACK_KING) {
             rights += "k";
         }
-        if self.has_right(CastleRight::BLACK_QUEEN) {
+        if self.has_right(CastleRights::BLACK_QUEEN) {
             rights += "q";
         }
         if rights == "" {
@@ -74,20 +74,20 @@ impl CastleRight {
     }
 }
 
-impl Display for CastleRight {
+impl Display for CastleRights {
     fn fmt(&self, formatter: &mut Formatter<'_>) -> Result {
         write!(formatter, "{}", self.to_string())
     }
 }
 
-impl From<CastleRight> for u8 {
-    fn from(castle_right: CastleRight) -> Self {
+impl From<CastleRights> for u8 {
+    fn from(castle_right: CastleRights) -> Self {
         castle_right.get_raw()
     }
 }
 
-impl From<CastleRight> for usize {
-    fn from(castile_right: CastleRight) -> Self {
+impl From<CastleRights> for usize {
+    fn from(castile_right: CastleRights) -> Self {
         castile_right.get_raw() as usize
     }
 }

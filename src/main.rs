@@ -1,6 +1,11 @@
 use spear::{Perft, FEN};
 
 fn main() {
+    #[cfg(target_feature = "bmi2")]
+    {
+        println!("x1")
+    }
+
     let mut nodes = 0u128;
     let mut duration = 0u128;
 

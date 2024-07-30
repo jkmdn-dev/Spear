@@ -1,6 +1,6 @@
 use crate::{
     attacks::{Attacks, Rays},
-    Bitboard, CastleRight, ChessBoard, Move, MoveFlag, Square,
+    Bitboard, CastleRights, ChessBoard, Move, MoveFlag, Square,
 };
 
 use super::MoveGen;
@@ -42,13 +42,13 @@ impl MoveGen {
         if STM_WHITE {
             let king_side_room = Rays::get_ray(
                 king_square,
-                Square::from_raw(CastleRight::ROOK_POSITIONS[1]).shift_right(1),
+                Square::from_raw(CastleRights::ROOK_POSITIONS[1]).shift_right(1),
             ) & board.get_occupancy();
             let queen_side_room = Rays::get_ray(
                 king_square,
-                Square::from_raw(CastleRight::ROOK_POSITIONS[0]).shift_left(1),
+                Square::from_raw(CastleRights::ROOK_POSITIONS[0]).shift_left(1),
             ) & board.get_occupancy();
-            if board.castle_rights().has_right(CastleRight::WHITE_KING)
+            if board.castle_rights().has_right(CastleRights::WHITE_KING)
                 && (Rays::get_ray(king_square, king_side_destination) & attack_map).is_empty()
                 && king_side_room.is_empty()
             {
@@ -58,7 +58,7 @@ impl MoveGen {
                     MoveFlag::KING_SIDE_CASTLE,
                 ))
             }
-            if board.castle_rights().has_right(CastleRight::WHITE_QUEEN)
+            if board.castle_rights().has_right(CastleRights::WHITE_QUEEN)
                 && (Rays::get_ray(king_square, queen_side_destination) & attack_map).is_empty()
                 && queen_side_room.is_empty()
             {
@@ -71,17 +71,17 @@ impl MoveGen {
         } else {
             let king_side_room = Rays::get_ray(
                 king_square,
-                Square::from_raw(CastleRight::ROOK_POSITIONS[1])
+                Square::from_raw(CastleRights::ROOK_POSITIONS[1])
                     .flip()
                     .shift_right(1),
             ) & board.get_occupancy();
             let queen_side_room = Rays::get_ray(
                 king_square,
-                Square::from_raw(CastleRight::ROOK_POSITIONS[0])
+                Square::from_raw(CastleRights::ROOK_POSITIONS[0])
                     .flip()
                     .shift_left(1),
             ) & board.get_occupancy();
-            if board.castle_rights().has_right(CastleRight::BLACK_KING)
+            if board.castle_rights().has_right(CastleRights::BLACK_KING)
                 && (Rays::get_ray(king_square, king_side_destination) & attack_map).is_empty()
                 && king_side_room.is_empty()
             {
@@ -91,7 +91,7 @@ impl MoveGen {
                     MoveFlag::KING_SIDE_CASTLE,
                 ))
             }
-            if board.castle_rights().has_right(CastleRight::BLACK_QUEEN)
+            if board.castle_rights().has_right(CastleRights::BLACK_QUEEN)
                 && (Rays::get_ray(king_square, queen_side_destination) & attack_map).is_empty()
                 && queen_side_room.is_empty()
             {

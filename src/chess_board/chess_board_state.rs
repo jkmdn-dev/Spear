@@ -1,6 +1,6 @@
 use crate::{
     base_structures::{Side, ZobristKey},
-    CastleRight, ChessBoard, Piece, Square,
+    CastleRights, ChessBoard, Piece, Square,
 };
 
 #[derive(Clone, Copy, Default)]
@@ -9,7 +9,7 @@ pub struct ChessBoardState {
     half_moves: u8,
     en_passant: Square,
     side_to_move: Side,
-    castle_rights: CastleRight,
+    castle_rights: CastleRights,
     //free 4 bytes
 }
 
@@ -30,7 +30,7 @@ impl ChessBoardState {
     }
 
     #[inline]
-    pub(super) fn get_castle_rights_mut(&mut self) -> &mut CastleRight {
+    pub(super) fn get_castle_rights_mut(&mut self) -> &mut CastleRights {
         &mut self.castle_rights
     }
 
@@ -64,7 +64,7 @@ impl ChessBoard {
     }
 
     #[inline]
-    pub fn castle_rights(&self) -> CastleRight {
+    pub fn castle_rights(&self) -> CastleRights {
         self.state.castle_rights
     }
 
