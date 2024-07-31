@@ -11,12 +11,23 @@ impl Perft {
         let board = ChessBoard::from_fen(fen);
 
         if PRINT {
+            let pext = {
+                #[cfg(target_feature = "bmi2")] {
+                    true
+                }
+
+                #[cfg(not(target_feature = "bmi2"))] {
+                    false
+                }
+            };
+
             board.draw_board();
             println!("-----------------------------------------------------------");
             println!("  Starting PERFT");
             println!("  Depth: {depth}");
             println!("  Split: {SPLIT}");
             println!("  Bulk: {BULK}");
+            println!("  PEXT: {pext}", );
             println!("-----------------------------------------------------------");
         }
 

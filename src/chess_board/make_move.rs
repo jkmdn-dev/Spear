@@ -1,5 +1,7 @@
 use crate::{base_structures::Move, CastleRights, ChessBoard, MoveFlag, Piece, Square};
 
+use super::chess_board_state::PHASE_VALUES;
+
 impl ChessBoard {
     #[inline]
     pub fn make_move<const STM_WHITE: bool, const NSTM_WHITE: bool>(&mut self, mv: Move) {
@@ -176,6 +178,7 @@ impl ChessBoard {
     ) {
         if CAPTURED_PIECE != NONE {
             self.remove_piece_on_square::<NSTM_WHITE>(to_square, Piece::from_raw(CAPTURED_PIECE));
+            *self.state.get_phase_mut() -= PHASE_VALUES[CAPTURED_PIECE as usize];
         }
 
         self.remove_piece_on_square::<STM_WHITE>(from_square, Piece::from_raw(MOVED_PIECE));
@@ -220,6 +223,8 @@ impl ChessBoard {
             MoveFlag::KNIGHT_PROMOTION.. => {
                 let promotion_piece = mv.get_promotion_piece();
                 self.set_piece_on_square::<STM_WHITE>(to_square, promotion_piece);
+                *self.state.get_phase_mut() -= PHASE_VALUES[PAWN as usize];
+                *self.state.get_phase_mut() += PHASE_VALUES[promotion_piece.get_raw() as usize];
             }
             _ => {}
         }

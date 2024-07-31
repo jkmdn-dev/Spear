@@ -2,7 +2,7 @@ use colored::Colorize;
 
 use crate::{base_structures::Side, CastleRights, Piece, Square, FEN};
 
-use super::{chess_board_pieces::ChessBoardPieces, chess_board_state::ChessBoardState};
+use super::{chess_board_pieces::ChessBoardPieces, chess_board_state::{ChessBoardState, PHASE_VALUES}};
 
 #[derive(Clone, Copy, Default)]
 pub struct ChessBoard {
@@ -32,29 +32,41 @@ impl ChessBoard {
                 }
 
                 if piece_char == 'P' {
-                    board.set_piece_on_square::<true>(square, Piece::PAWN)
+                    board.set_piece_on_square::<true>(square, Piece::PAWN);
+                    *board.state.get_phase_mut() += PHASE_VALUES[Piece::PAWN.get_raw() as usize];
                 } else if piece_char == 'N' {
-                    board.set_piece_on_square::<true>(square, Piece::KNIGHT)
+                    board.set_piece_on_square::<true>(square, Piece::KNIGHT);
+                    *board.state.get_phase_mut() += PHASE_VALUES[Piece::KNIGHT.get_raw() as usize];
                 } else if piece_char == 'B' {
-                    board.set_piece_on_square::<true>(square, Piece::BISHOP)
+                    board.set_piece_on_square::<true>(square, Piece::BISHOP);
+                    *board.state.get_phase_mut() += PHASE_VALUES[Piece::BISHOP.get_raw() as usize];
                 } else if piece_char == 'R' {
-                    board.set_piece_on_square::<true>(square, Piece::ROOK)
+                    board.set_piece_on_square::<true>(square, Piece::ROOK);
+                    *board.state.get_phase_mut() += PHASE_VALUES[Piece::ROOK.get_raw() as usize];
                 } else if piece_char == 'Q' {
-                    board.set_piece_on_square::<true>(square, Piece::QUEEN)
+                    board.set_piece_on_square::<true>(square, Piece::QUEEN);
+                    *board.state.get_phase_mut() += PHASE_VALUES[Piece::QUEEN.get_raw() as usize];
                 } else if piece_char == 'K' {
-                    board.set_piece_on_square::<true>(square, Piece::KING)
+                    board.set_piece_on_square::<true>(square, Piece::KING);
+                    *board.state.get_phase_mut() += PHASE_VALUES[Piece::KING.get_raw() as usize];
                 } else if piece_char == 'p' {
-                    board.set_piece_on_square::<false>(square, Piece::PAWN)
+                    board.set_piece_on_square::<false>(square, Piece::PAWN);
+                    *board.state.get_phase_mut() += PHASE_VALUES[Piece::PAWN.get_raw() as usize];
                 } else if piece_char == 'n' {
-                    board.set_piece_on_square::<false>(square, Piece::KNIGHT)
+                    board.set_piece_on_square::<false>(square, Piece::KNIGHT);
+                    *board.state.get_phase_mut() += PHASE_VALUES[Piece::KNIGHT.get_raw() as usize];
                 } else if piece_char == 'b' {
-                    board.set_piece_on_square::<false>(square, Piece::BISHOP)
+                    board.set_piece_on_square::<false>(square, Piece::BISHOP);
+                    *board.state.get_phase_mut() += PHASE_VALUES[Piece::BISHOP.get_raw() as usize];
                 } else if piece_char == 'r' {
-                    board.set_piece_on_square::<false>(square, Piece::ROOK)
+                    board.set_piece_on_square::<false>(square, Piece::ROOK);
+                    *board.state.get_phase_mut() += PHASE_VALUES[Piece::ROOK.get_raw() as usize];
                 } else if piece_char == 'q' {
-                    board.set_piece_on_square::<false>(square, Piece::QUEEN)
+                    board.set_piece_on_square::<false>(square, Piece::QUEEN);
+                    *board.state.get_phase_mut() += PHASE_VALUES[Piece::QUEEN.get_raw() as usize];
                 } else if piece_char == 'k' {
-                    board.set_piece_on_square::<false>(square, Piece::KING)
+                    board.set_piece_on_square::<false>(square, Piece::KING);
+                    *board.state.get_phase_mut() += PHASE_VALUES[Piece::KING.get_raw() as usize];
                 }
 
                 index += 1;

@@ -4,6 +4,7 @@ mod chess_board;
 mod move_gen;
 mod perft;
 mod utils;
+mod binpacks;
 
 #[allow(unused)]
 pub use attacks::Attacks;
@@ -29,3 +30,5 @@ pub use chess_board::ChessBoard;
 pub use chess_board::ChessPosition;
 #[allow(unused)]
 pub use perft::Perft;
+#[allow(unused)]
+pub use binpacks::ChessBoardPacked;

@@ -42,12 +42,9 @@ impl ChessBoard {
         let queens = self.get_piece_mask(Piece::QUEEN);
         ((Attacks::get_knight_attacks_for_square(square) & self.get_piece_mask(Piece::KNIGHT))
             | (Attacks::get_king_attacks_for_square(square) & self.get_piece_mask(Piece::KING))
-            | (Attacks::get_pawn_attacks_for_square::<DEFENDER_WHITE>(square)
-                & self.get_piece_mask(Piece::PAWN))
-            | (Attacks::get_rook_attacks_for_square(square, occupancy)
-                & (self.get_piece_mask(Piece::ROOK) | queens))
-            | (Attacks::get_bishop_attacks_for_square(square, occupancy)
-                & (self.get_piece_mask(Piece::BISHOP) | queens)))
+            | (Attacks::get_pawn_attacks_for_square::<DEFENDER_WHITE>(square) & self.get_piece_mask(Piece::PAWN))
+            | (Attacks::get_rook_attacks_for_square(square, occupancy) & (self.get_piece_mask(Piece::ROOK) | queens))
+            | (Attacks::get_bishop_attacks_for_square(square, occupancy) & (self.get_piece_mask(Piece::BISHOP) | queens)))
             & self.get_occupancy_for_side::<ATTACKER_WHITE>()
     }
 

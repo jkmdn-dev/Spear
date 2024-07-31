@@ -3,6 +3,8 @@ use crate::{
     CastleRights, ChessBoard, Piece, Square,
 };
 
+pub(super) const PHASE_VALUES: [u8; 6] = [0,1,1,2,4,0]; 
+
 #[derive(Clone, Copy, Default)]
 pub struct ChessBoardState {
     zobrist: ZobristKey,
@@ -10,7 +12,7 @@ pub struct ChessBoardState {
     en_passant: Square,
     side_to_move: Side,
     castle_rights: CastleRights,
-    //free 4 bytes
+    phase: u8
 }
 
 impl ChessBoardState {
@@ -37,6 +39,11 @@ impl ChessBoardState {
     #[inline]
     pub(super) fn get_half_move_counter_mut(&mut self) -> &mut u8 {
         &mut self.half_moves
+    }
+
+    #[inline]
+    pub(super) fn get_phase_mut(&mut self) -> &mut u8 {
+        &mut self.phase
     }
 }
 
@@ -74,18 +81,19 @@ impl ChessBoard {
     }
 
     #[inline]
+    pub fn get_phase(&self) -> u8 {
+        self.state.phase
+    }
+
+    #[inline]
     pub fn is_insufficient_material(&self) -> bool {
-        let pawns = self.get_piece_mask(Piece::PAWN).is_empty();
-        let major_pieces =
-            (self.get_piece_mask(Piece::ROOK) | self.get_piece_mask(Piece::QUEEN)).is_empty();
-        let white_minor_pieces = (self.get_piece_mask_for_side::<true>(Piece::KNIGHT)
-            | self.get_piece_mask_for_side::<true>(Piece::BISHOP))
-        .pop_count()
-            < 2;
-        let black_minor_pieces = (self.get_piece_mask_for_side::<false>(Piece::KNIGHT)
-            | self.get_piece_mask_for_side::<false>(Piece::BISHOP))
-        .pop_count()
-            < 2;
-        pawns && major_pieces && white_minor_pieces && black_minor_pieces
+        let phase = self.get_phase();
+        let bishops = self.get_piece_mask(Piece::BISHOP);
+        phase <= 2
+            && self.get_piece_mask(Piece::PAWN).is_empty()
+            && ((phase != 2)
+                || (bishops & self.get_occupancy_for_side::<true>() != bishops
+                    && bishops & self.get_occupancy_for_side::<false>() != bishops
+                    && (bishops & 0x55AA55AA55AA55AA == bishops || bishops & 0xAA55AA55AA55AA55 == bishops)))
     }
 }
