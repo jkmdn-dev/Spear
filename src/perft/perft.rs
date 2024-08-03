@@ -1,6 +1,6 @@
 use std::time::Instant;
 
-use crate::{base_structures::Side, ChessBoard, FEN};
+use crate::{base_structures::Side, ChessBoard, StringUtils, FEN};
 
 pub struct Perft;
 impl Perft {
@@ -42,10 +42,10 @@ impl Perft {
         if PRINT {
             println!("-----------------------------------------------------------");
             println!(
-                "  Perft ended! {} nodes, {:.2}s, {:.2} Mnps",
+                "  Perft ended! {} nodes, {}, {}n/s",
                 result,
-                duration as f64 / 1000.0,
-                ((result * 1000) as f64 / duration as f64) / 1_000_000f64
+                StringUtils::time_to_string(duration),
+                StringUtils::large_number_to_string(((result * 1000) as f64 / duration as f64) as u128)
             );
             println!("-----------------------------------------------------------");
         }
