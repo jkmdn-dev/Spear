@@ -139,6 +139,10 @@ impl ChessBoard {
             let piece = Piece::from_raw(if pack.get_board()[0].get_bit(square) { 1 } else { 0 }
             | if pack.get_board()[1].get_bit(square) { 2 } else { 0 }
             | if pack.get_board()[2].get_bit(square) { 4 } else { 0 });
+            println!("{}", piece.get_raw());
+            if piece.get_raw() == 0b111 {
+                continue;
+            }
 
             if pack.get_board()[3].get_bit(square) {
                 result.set_piece_on_square::<false>(square, piece);
@@ -158,6 +162,9 @@ impl ChessBoard {
             let piece = Piece::from_raw(if pack.get_board()[0].get_bit(square) { 1 } else { 0 }
             | if pack.get_board()[1].get_bit(square) { 2 } else { 0 }
             | if pack.get_board()[2].get_bit(square) { 4 } else { 0 });
+            if piece.get_raw() == 0b111 {
+                continue;
+            }
 
             if pack.get_board()[3].get_bit(square) {
                 result.set_piece_on_square::<false>(square, piece);

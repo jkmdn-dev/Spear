@@ -69,6 +69,10 @@ fn board_to_compressed(board: &ChessBoard) -> [Bitboard; 4] {
     let mut result = [Bitboard::EMPTY; 4];
 
     board.get_occupancy().map(|square|{
+        result[0].pop_bit(square);
+        result[1].pop_bit(square);
+        result[2].pop_bit(square);
+        result[3].pop_bit(square);
         let piece = board.get_piece_on_square(square);
         let color = board.get_piece_color_on_square(square);
         for bit_index in 0..3usize {

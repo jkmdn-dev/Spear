@@ -5,8 +5,13 @@ use std::{
 
 use super::bitboard::Bitboard;
 
-#[derive(Copy, Clone, Default, PartialEq)]
+#[derive(Copy, Clone, PartialEq)]
 pub struct Square(u8);
+
+impl Default for Square {
+    fn default() -> Self { Square::NULL }
+}
+
 impl Square {
     pub const A1: Self = Self(0);
     pub const B1: Self = Self(1);
