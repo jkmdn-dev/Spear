@@ -1,13 +1,12 @@
 use colored::Colorize;
 
-use crate::{base_structures::Side, CastleRights, Piece, Square, FEN};
+use crate::{CastleRights, ChessBoardPacked, Piece, PolicyPacked, Side, Square, FEN};
 
 use super::{chess_board_pieces::ChessBoardPieces, chess_board_state::{ChessBoardState, PHASE_VALUES}};
 
 #[derive(Clone, Copy, Default)]
 pub struct ChessBoard {
     pub(super) pieces: ChessBoardPieces,
-    //pub(super) masks: ChessBoardMasks,
     pub(super) state: ChessBoardState,
 }
 
@@ -15,7 +14,6 @@ impl ChessBoard {
     pub fn from_fen(fen: &FEN) -> Self {
         let mut board = Self {
             pieces: ChessBoardPieces::default(),
-            //masks: ChessBoardMasks::default(),
             state: ChessBoardState::default(),
         };
 
@@ -94,7 +92,6 @@ impl ChessBoard {
             print!("Illegal position!\n");
             return Self {
                 pieces: ChessBoardPieces::default(),
-                //masks: ChessBoardMasks::default(),
                 state: ChessBoardState::default(),
             };
         }
@@ -135,7 +132,43 @@ impl ChessBoard {
         board
     }
 
-    //from datapack
+    pub fn from_board_pack(pack: &ChessBoardPacked) -> Self {
+        let mut result = ChessBoard::default();
+        for square_index in 0..64 {
+            let square = Square::from_raw(square_index);
+            let piece = Piece::from_raw(if pack.get_board()[0].get_bit(square) { 1 } else { 0 }
+            | if pack.get_board()[1].get_bit(square) { 2 } else { 0 }
+            | if pack.get_board()[2].get_bit(square) { 4 } else { 0 });
+
+            if pack.get_board()[3].get_bit(square) {
+                result.set_piece_on_square::<false>(square, piece);
+            } else {
+                result.set_piece_on_square::<true>(square, piece);
+            }
+        }
+
+        *result.state.get_side_to_move_mut() = pack.get_side_to_move();
+        result
+    }
+
+    pub fn from_policy_pack(pack: &PolicyPacked) -> Self {
+        let mut result = ChessBoard::default();
+        for square_index in 0..64 {
+            let square = Square::from_raw(square_index);
+            let piece = Piece::from_raw(if pack.get_board()[0].get_bit(square) { 1 } else { 0 }
+            | if pack.get_board()[1].get_bit(square) { 2 } else { 0 }
+            | if pack.get_board()[2].get_bit(square) { 4 } else { 0 });
+
+            if pack.get_board()[3].get_bit(square) {
+                result.set_piece_on_square::<false>(square, piece);
+            } else {
+                result.set_piece_on_square::<true>(square, piece);
+            }
+        }
+
+        *result.state.get_side_to_move_mut() = pack.get_side_to_move();
+        result
+    }
 
     pub fn get_fen(&self) -> FEN {
         let mut fen = String::new();
@@ -244,8 +277,8 @@ impl ChessBoard {
             }
         );
         info.push(in_check.as_str());
-        let xxx = format!("");
-        info.push(xxx.as_str());
+        let insufficient_material = format!("Insufficient material: {}", self.is_insufficient_material());
+        info.push(insufficient_material.as_str());
 
         let mut result = " ------------------------\n".to_string();
         for rank in (0..8).rev() {

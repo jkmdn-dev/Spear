@@ -4,7 +4,7 @@ use crate::{Piece, Square};
 
 use super::move_flags::MoveFlag;
 
-#[derive(Copy, Clone, PartialEq)]
+#[derive(Copy, Clone, PartialEq, Default)]
 //16 bit move
 //0..5 -> from square
 //6..9 -> flag

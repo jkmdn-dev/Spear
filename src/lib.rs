@@ -11,6 +11,8 @@ pub use attacks::Attacks;
 #[allow(unused)]
 pub use base_structures::Bitboard;
 #[allow(unused)]
+pub use base_structures::Side;
+#[allow(unused)]
 pub use base_structures::CastleRights;
 #[allow(unused)]
 pub use base_structures::Move;
@@ -32,3 +34,7 @@ pub use chess_board::ChessPosition;
 pub use perft::Perft;
 #[allow(unused)]
 pub use binpacks::ChessBoardPacked;
+#[allow(unused)]
+pub use binpacks::PolicyPacked;
+#[allow(unused)]
+pub use utils::StringUtils;
