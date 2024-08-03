@@ -5,7 +5,7 @@ use crate::{
 
 pub(super) const PHASE_VALUES: [u8; 6] = [0,1,1,2,4,0]; 
 
-#[derive(Clone, Copy, Default)]
+#[derive(Clone, Copy, Default, PartialEq)]
 pub struct ChessBoardState {
     zobrist: ZobristKey,
     half_moves: u8,

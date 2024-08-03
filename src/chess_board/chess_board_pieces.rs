@@ -1,6 +1,6 @@
 use crate::{base_structures::Side, Bitboard, ChessBoard, Piece, Square};
 
-#[derive(Clone, Copy, Default)]
+#[derive(Clone, Copy, Default, PartialEq)]
 pub struct ChessBoardPieces {
     occupancy: [Bitboard; 2],
     pieces: [Bitboard; 6],

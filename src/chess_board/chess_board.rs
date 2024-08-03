@@ -4,7 +4,7 @@ use crate::{CastleRights, ChessBoardPacked, Piece, PolicyPacked, Side, Square, F
 
 use super::{chess_board_pieces::ChessBoardPieces, chess_board_state::{ChessBoardState, PHASE_VALUES}};
 
-#[derive(Clone, Copy, Default)]
+#[derive(Clone, Copy, Default, PartialEq)]
 pub struct ChessBoard {
     pub(super) pieces: ChessBoardPieces,
     pub(super) state: ChessBoardState,
