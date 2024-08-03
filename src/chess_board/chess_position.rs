@@ -27,12 +27,12 @@ impl ChessPosition {
     }
 
     #[inline]
-    pub fn get_chess_board(&self) -> &ChessBoard {
+    pub fn board(&self) -> &ChessBoard {
         &self.board
     }
 
     #[inline]
-    pub fn get_chess_board_mut(&mut self) -> &mut ChessBoard {
+    pub fn board_mut(&mut self) -> &mut ChessBoard {
         &mut self.board
     }
 
