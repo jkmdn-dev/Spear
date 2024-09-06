@@ -29,8 +29,8 @@ impl FEN {
         let fen_parts: Vec<&str> = fen_string.split_whitespace().collect();
         let mut result: Self = Self::default();
         let board_parts: Vec<&str> = fen_parts[0].split('/').collect();
-        for index in 0..8 {
-            result.board[index] = board_parts[index].to_string()
+        for (index, part) in board_parts.into_iter().enumerate() {
+            result.board[index] = part.to_string()
         }
 
         result.side_to_move = fen_parts[1].to_string();
@@ -69,11 +69,11 @@ impl FEN {
             return false;
         }
 
-        let castle_rights_contain = fen_parts[2].contains("-")
-            || fen_parts[2].contains("K")
-            || fen_parts[2].contains("Q")
-            || fen_parts[2].contains("k")
-            || fen_parts[2].contains("q");
+        let castle_rights_contain = fen_parts[2].contains('-')
+            || fen_parts[2].contains('K')
+            || fen_parts[2].contains('Q')
+            || fen_parts[2].contains('k')
+            || fen_parts[2].contains('q');
         if fen_parts[2].len() > 4 || !castle_rights_contain {
             return false;
         }
@@ -87,23 +87,22 @@ impl FEN {
             return false;
         }
 
-        if fen_parts.len() > 4 {
-            if let Err(_) = fen_parts[4].parse::<u8>() {
-                return false;
-            }
+        if fen_parts.len() > 4 && fen_parts[4].parse::<u8>().is_err() {
+            return false;
         }
 
-        if fen_parts.len() > 5 {
-            if let Err(_) = fen_parts[5].parse::<u16>() {
-                return false;
-            }
+        if fen_parts.len() > 5 && fen_parts[5].parse::<u16>().is_err() {
+            return false;
         }
 
         true
     }
+}
 
-    pub fn to_string(&self) -> String {
-        format!(
+impl Display for FEN {
+    fn fmt(&self, formatter: &mut Formatter<'_>) -> Result {
+        write!(
+            formatter,
             "{}/{}/{}/{}/{}/{}/{}/{} {} {} {} {} {}",
             self.board[0],
             self.board[1],
@@ -119,11 +118,5 @@ impl FEN {
             self.half_move_counter,
             self.full_move_counter
         )
-    }
-}
-
-impl Display for FEN {
-    fn fmt(&self, formatter: &mut Formatter<'_>) -> Result {
-        write!(formatter, "{}", self.to_string())
     }
 }

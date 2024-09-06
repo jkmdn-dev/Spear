@@ -1,3 +1,3 @@
-mod perft;
+mod perft_tests;
 
-pub use perft::Perft;
+pub use perft_tests::Perft;

@@ -3,7 +3,7 @@ use crate::{
     CastleRights, ChessBoard, Piece, Square,
 };
 
-pub(super) const PHASE_VALUES: [u8; 6] = [0,1,1,2,4,0]; 
+pub(super) const PHASE_VALUES: [u8; 6] = [0, 1, 1, 2, 4, 0];
 
 #[derive(Clone, Copy, Default, PartialEq)]
 pub struct ChessBoardState {
@@ -12,7 +12,7 @@ pub struct ChessBoardState {
     en_passant: Square,
     side_to_move: Side,
     castle_rights: CastleRights,
-    phase: u8
+    phase: u8,
 }
 
 impl ChessBoardState {
@@ -94,6 +94,7 @@ impl ChessBoard {
             && ((phase != 2)
                 || (bishops & self.get_occupancy_for_side::<true>() != bishops
                     && bishops & self.get_occupancy_for_side::<false>() != bishops
-                    && (bishops & 0x55AA55AA55AA55AA == bishops || bishops & 0xAA55AA55AA55AA55 == bishops)))
+                    && (bishops & 0x55AA55AA55AA55AA == bishops
+                        || bishops & 0xAA55AA55AA55AA55 == bishops)))
     }
 }

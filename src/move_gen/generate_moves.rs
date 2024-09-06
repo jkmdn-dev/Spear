@@ -7,7 +7,7 @@ impl ChessBoard {
         &self,
         mut method: F,
     ) {
-        Self::map_moves_internal::<F, false, STM_WHITE, NSTM_WHITE>(&self, &mut method)
+        Self::map_moves_internal::<F, false, STM_WHITE, NSTM_WHITE>(self, &mut method)
     }
 
     #[inline]
@@ -15,7 +15,7 @@ impl ChessBoard {
         &self,
         mut method: F,
     ) {
-        Self::map_moves_internal::<F, true, STM_WHITE, NSTM_WHITE>(&self, &mut method)
+        Self::map_moves_internal::<F, true, STM_WHITE, NSTM_WHITE>(self, &mut method)
     }
 
     fn map_moves_internal<

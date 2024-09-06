@@ -13,7 +13,7 @@ impl Piece {
 
     #[inline]
     pub const fn from_raw(value: u8) -> Self {
-        Self { 0: value }
+        Self(value)
     }
 
     #[inline]

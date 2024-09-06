@@ -9,7 +9,9 @@ use super::bitboard::Bitboard;
 pub struct Square(u8);
 
 impl Default for Square {
-    fn default() -> Self { Square::NULL }
+    fn default() -> Self {
+        Square::NULL
+    }
 }
 
 impl Square {
@@ -86,7 +88,7 @@ impl Square {
 
     #[inline]
     pub const fn from_coords(rank: u8, file: u8) -> Self {
-        Self { 0: rank * 8 + file }
+        Self(rank * 8 + file)
     }
 
     #[inline]
@@ -129,20 +131,10 @@ impl Square {
         (self.get_bit() >> shift).ls1b_square()
     }
 
-    pub fn to_string(&self) -> String {
-        if *self == Square::NULL {
-            return "NULL".to_string();
-        }
-
-        let file = self.get_raw() % 8;
-        let rank = ((self.get_raw() as f32) / 8_f32).floor() as u8 + 1;
-        return format!("{}{}", ('a' as u8 + file) as char, rank);
-    }
-
     pub fn from_string(square: &str) -> Square {
         let signatures: Vec<char> = square.chars().collect();
-        let file = (signatures[0] as u8 - 'a' as u8).into();
-        let rank = (signatures[1].to_string().parse::<u8>().unwrap() - 1).into();
+        let file = signatures[0] as u8 - 'a' as u8;
+        let rank = signatures[1].to_string().parse::<u8>().unwrap() - 1;
         Square::from_coords(rank, file)
     }
 }
@@ -163,9 +155,7 @@ impl Add<u8> for Square {
 
     #[inline]
     fn add(self, rhs: u8) -> Self::Output {
-        Self {
-            0: self.get_raw() + rhs,
-        }
+        Self(self.get_raw() + rhs)
     }
 }
 impl Add<Square> for u8 {
@@ -173,9 +163,7 @@ impl Add<Square> for u8 {
 
     #[inline]
     fn add(self, rhs: Square) -> Self::Output {
-        Square {
-            0: self + rhs.get_raw(),
-        }
+        Square(self + rhs.get_raw())
     }
 }
 impl BitXor<u8> for Square {
@@ -189,6 +177,12 @@ impl BitXor<u8> for Square {
 
 impl Display for Square {
     fn fmt(&self, formatter: &mut Formatter<'_>) -> Result {
-        write!(formatter, "{}", self.to_string())
+        if *self == Square::NULL {
+            return write!(formatter, "NULL");
+        }
+
+        let file = self.get_raw() % 8;
+        let rank = ((self.get_raw() as f32) / 8_f32).floor() as u8 + 1;
+        write!(formatter, "{}{}", ('a' as u8 + file) as char, rank)
     }
 }

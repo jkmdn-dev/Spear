@@ -122,23 +122,17 @@ impl Bitboard {
 
     #[inline]
     pub const fn and(&self, rhs: Bitboard) -> Self {
-        Self {
-            0: self.get_raw() & rhs.get_raw(),
-        }
+        Self(self.get_raw() & rhs.get_raw())
     }
 
     #[inline]
     pub const fn or(&self, rhs: Bitboard) -> Self {
-        Self {
-            0: self.get_raw() | rhs.get_raw(),
-        }
+        Self(self.get_raw() | rhs.get_raw())
     }
 
     #[inline]
     pub const fn xor(&self, rhs: Bitboard) -> Self {
-        Self {
-            0: self.get_raw() ^ rhs.get_raw(),
-        }
+        Self(self.get_raw() ^ rhs.get_raw())
     }
 
     #[inline]
@@ -148,9 +142,7 @@ impl Bitboard {
 
     #[inline]
     pub const fn flip(&self) -> Self {
-        Self {
-            0: self.get_raw().swap_bytes(),
-        }
+        Self(self.get_raw().swap_bytes())
     }
 
     #[inline]
@@ -165,27 +157,21 @@ impl Bitboard {
 
     #[inline]
     pub const fn shift_left(self, rhs: u32) -> Self {
-        Self {
-            0: self.get_raw() << rhs,
-        }
+        Self(self.get_raw() << rhs)
     }
 
     #[inline]
     pub const fn shift_right(self, rhs: u32) -> Self {
-        Self {
-            0: self.get_raw() >> rhs,
-        }
+        Self(self.get_raw() >> rhs)
     }
 
     #[inline]
     pub const fn wrapping_mul(self, rhs: Bitboard) -> Self {
-        Self {
-            0: self.get_raw().wrapping_mul(rhs.get_raw()),
-        }
+        Self(self.get_raw().wrapping_mul(rhs.get_raw()))
     }
 
     pub fn draw_bitboard(&self) {
-        print!("{}\n", self.get_bitboard_string());
+        println!("{}", self.get_bitboard_string());
     }
 
     fn get_bitboard_string(&self) -> String {
@@ -419,6 +405,6 @@ impl Sub<u64> for Bitboard {
 
 impl Display for Bitboard {
     fn fmt(&self, formatter: &mut Formatter<'_>) -> Result {
-        write!(formatter, "{}\n", self.get_bitboard_string())
+        writeln!(formatter, "{}", self.get_bitboard_string())
     }
 }

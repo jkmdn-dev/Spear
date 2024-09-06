@@ -31,3 +31,9 @@ impl MoveHistory {
         repetitions
     }
 }
+
+impl Default for MoveHistory {
+    fn default() -> Self {
+        Self::new()
+    }
+}

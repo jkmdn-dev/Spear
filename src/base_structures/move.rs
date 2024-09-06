@@ -64,23 +64,20 @@ impl Move {
     pub fn get_promotion_piece(&self) -> Piece {
         Piece::from_raw(((self.get_flag() & 3) + 1) as u8)
     }
+}
 
-    pub fn to_string(&self) -> String {
-        format!(
+impl Display for Move {
+    fn fmt(&self, formatter: &mut Formatter<'_>) -> Result {
+        write!(
+            formatter,
             "{}{}{}",
-            self.get_from_square().to_string(),
-            self.get_to_square().to_string(),
+            self.get_from_square(),
+            self.get_to_square(),
             if self.is_promotion() {
                 ["n", "b", "r", "q"][(self.get_promotion_piece().get_raw() - 1) as usize]
             } else {
                 ""
             }
         )
-    }
-}
-
-impl Display for Move {
-    fn fmt(&self, formatter: &mut Formatter<'_>) -> Result {
-        write!(formatter, "{}", self.to_string())
     }
 }

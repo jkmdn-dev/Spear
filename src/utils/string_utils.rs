@@ -12,7 +12,7 @@ impl StringUtils {
         match number {
             0..=999 => format!("{number}"),
             1000..=999_999 => format!("{:.2}K", number as f64 / 1000.0),
-            1_000_000.. => format!("{:.2}M", number as f64 / 1_000_000.0)
+            1_000_000.. => format!("{:.2}M", number as f64 / 1_000_000.0),
         }
     }
 }

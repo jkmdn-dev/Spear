@@ -12,11 +12,13 @@ impl Perft {
 
         if PRINT {
             let pext = {
-                #[cfg(target_feature = "bmi2")] {
+                #[cfg(target_feature = "bmi2")]
+                {
                     true
                 }
 
-                #[cfg(not(target_feature = "bmi2"))] {
+                #[cfg(not(target_feature = "bmi2"))]
+                {
                     false
                 }
             };
@@ -27,7 +29,7 @@ impl Perft {
             println!("  Depth: {depth}");
             println!("  Split: {SPLIT}");
             println!("  Bulk: {BULK}");
-            println!("  PEXT: {pext}", );
+            println!("  PEXT: {pext}",);
             println!("-----------------------------------------------------------");
         }
 
@@ -45,7 +47,9 @@ impl Perft {
                 "  Perft ended! {} nodes, {}, {}n/s",
                 result,
                 StringUtils::time_to_string(duration),
-                StringUtils::large_number_to_string(((result * 1000) as f64 / duration as f64) as u128)
+                StringUtils::large_number_to_string(
+                    ((result * 1000) as f64 / duration as f64) as u128
+                )
             );
             println!("-----------------------------------------------------------");
         }

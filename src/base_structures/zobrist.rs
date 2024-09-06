@@ -39,9 +39,7 @@ impl BitXor for ZobristKey {
     type Output = ZobristKey;
 
     fn bitxor(self, rhs: ZobristKey) -> Self::Output {
-        Self {
-            0: self.get_raw() ^ rhs.get_raw(),
-        }
+        Self(self.get_raw() ^ rhs.get_raw())
     }
 }
 
@@ -55,9 +53,7 @@ impl BitXor<u64> for ZobristKey {
     type Output = ZobristKey;
 
     fn bitxor(self, rhs: u64) -> Self::Output {
-        Self {
-            0: self.get_raw() ^ rhs,
-        }
+        Self(self.get_raw() ^ rhs)
     }
 }
 

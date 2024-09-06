@@ -2,7 +2,10 @@ use colored::Colorize;
 
 use crate::{CastleRights, ChessBoardPacked, Piece, PolicyPacked, Side, Square, FEN};
 
-use super::{chess_board_pieces::ChessBoardPieces, chess_board_state::{ChessBoardState, PHASE_VALUES}};
+use super::{
+    chess_board_pieces::ChessBoardPieces,
+    chess_board_state::{ChessBoardState, PHASE_VALUES},
+};
 
 #[derive(Clone, Copy, Default, PartialEq)]
 pub struct ChessBoard {
@@ -89,7 +92,7 @@ impl ChessBoard {
         } else {
             board.is_square_attacked::<true, false>(king_square)
         } {
-            print!("Illegal position!\n");
+            println!("Illegal position!");
             return Self {
                 pieces: ChessBoardPieces::default(),
                 state: ChessBoardState::default(),
@@ -136,9 +139,21 @@ impl ChessBoard {
         let mut result = ChessBoard::default();
         for square_index in 0..64 {
             let square = Square::from_raw(square_index);
-            let piece = Piece::from_raw(if pack.get_board()[0].get_bit(square) { 1 } else { 0 }
-            | if pack.get_board()[1].get_bit(square) { 2 } else { 0 }
-            | if pack.get_board()[2].get_bit(square) { 4 } else { 0 });
+            let piece = Piece::from_raw(
+                if pack.get_board()[0].get_bit(square) {
+                    1
+                } else {
+                    0
+                } | if pack.get_board()[1].get_bit(square) {
+                    2
+                } else {
+                    0
+                } | if pack.get_board()[2].get_bit(square) {
+                    4
+                } else {
+                    0
+                },
+            );
             println!("{}", piece.get_raw());
             if piece.get_raw() == 0b111 {
                 continue;
@@ -159,9 +174,21 @@ impl ChessBoard {
         let mut result = ChessBoard::default();
         for square_index in 0..64 {
             let square = Square::from_raw(square_index);
-            let piece = Piece::from_raw(if pack.get_board()[0].get_bit(square) { 1 } else { 0 }
-            | if pack.get_board()[1].get_bit(square) { 2 } else { 0 }
-            | if pack.get_board()[2].get_bit(square) { 4 } else { 0 });
+            let piece = Piece::from_raw(
+                if pack.get_board()[0].get_bit(square) {
+                    1
+                } else {
+                    0
+                } | if pack.get_board()[1].get_bit(square) {
+                    2
+                } else {
+                    0
+                } | if pack.get_board()[2].get_bit(square) {
+                    4
+                } else {
+                    0
+                },
+            );
             if piece.get_raw() == 0b111 {
                 continue;
             }
@@ -284,7 +311,8 @@ impl ChessBoard {
             }
         );
         info.push(in_check.as_str());
-        let insufficient_material = format!("Insufficient material: {}", self.is_insufficient_material());
+        let insufficient_material =
+            format!("Insufficient material: {}", self.is_insufficient_material());
         info.push(insufficient_material.as_str());
 
         let mut result = " ------------------------\n".to_string();
@@ -317,6 +345,6 @@ impl ChessBoard {
             result += "\n".to_string().as_str();
         }
         result += " ------------------------\n".to_string().as_str();
-        print!("{}\n", result);
+        println!("{}", result);
     }
 }

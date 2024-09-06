@@ -18,9 +18,8 @@ impl BishopAttacks {
             .get_raw() as usize;
 
         #[cfg(target_feature = "bmi2")]
-        let index = unsafe {
-            _pext_u64(occupancy.get_raw(), BISHOP_MASKS[square].get_raw()) as usize
-        };
+        let index =
+            unsafe { _pext_u64(occupancy.get_raw(), BISHOP_MASKS[square].get_raw()) as usize };
 
         BISHOP_ATTACKS[square][index]
     }
@@ -70,10 +69,14 @@ static BISHOP_ATTACKS: Lazy<Vec<Vec<Bitboard>>> = Lazy::new(|| {
 
             #[cfg(target_feature = "bmi2")]
             let attack_index = unsafe {
-                _pext_u64(occupancy.get_raw(), BISHOP_MASKS[square_index as usize].get_raw()) as usize
+                _pext_u64(
+                    occupancy.get_raw(),
+                    BISHOP_MASKS[square_index as usize].get_raw(),
+                ) as usize
             };
-    
-            result[square_index as usize][attack_index] = generate_bishop_attacks(square, occupancy);
+
+            result[square_index as usize][attack_index] =
+                generate_bishop_attacks(square, occupancy);
             index += 1;
         }
     }

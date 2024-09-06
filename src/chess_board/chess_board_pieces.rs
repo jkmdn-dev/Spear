@@ -23,7 +23,7 @@ impl ChessBoardPieces {
             }
         }
 
-        return Piece::NONE;
+        Piece::NONE
     }
 
     #[inline]

@@ -18,9 +18,8 @@ impl RookAttacks {
             .get_raw() as usize;
 
         #[cfg(target_feature = "bmi2")]
-        let index = unsafe {
-            _pext_u64(occupancy.get_raw(), ROOK_MASKS[square].get_raw()) as usize
-        };
+        let index =
+            unsafe { _pext_u64(occupancy.get_raw(), ROOK_MASKS[square].get_raw()) as usize };
 
         ROOK_ATTACKS[square][index]
     }
@@ -70,7 +69,10 @@ static ROOK_ATTACKS: Lazy<Vec<Vec<Bitboard>>> = Lazy::new(|| {
 
             #[cfg(target_feature = "bmi2")]
             let attack_index = unsafe {
-                _pext_u64(occupancy.get_raw(), ROOK_MASKS[square_index as usize].get_raw()) as usize
+                _pext_u64(
+                    occupancy.get_raw(),
+                    ROOK_MASKS[square_index as usize].get_raw(),
+                ) as usize
             };
 
             result[square_index as usize][attack_index] = generate_rook_attacks(square, occupancy);

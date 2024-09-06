@@ -52,8 +52,10 @@ impl CastleRights {
     pub fn get_index(&self) -> usize {
         self.0.trailing_zeros() as usize
     }
+}
 
-    pub fn to_string(&self) -> String {
+impl Display for CastleRights {
+    fn fmt(&self, formatter: &mut Formatter<'_>) -> Result {
         let mut rights = "".to_string();
         if self.has_right(CastleRights::WHITE_KING) {
             rights += "K";
@@ -67,16 +69,11 @@ impl CastleRights {
         if self.has_right(CastleRights::BLACK_QUEEN) {
             rights += "q";
         }
-        if rights == "" {
+        if rights.is_empty() {
             rights = "-".to_string();
         }
-        rights
-    }
-}
 
-impl Display for CastleRights {
-    fn fmt(&self, formatter: &mut Formatter<'_>) -> Result {
-        write!(formatter, "{}", self.to_string())
+        write!(formatter, "{}", rights)
     }
 }
 

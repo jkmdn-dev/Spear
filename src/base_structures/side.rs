@@ -30,19 +30,19 @@ impl Side {
     pub fn mut_flip(&mut self) {
         self.0 = 1 - self.0;
     }
-
-    pub fn to_string(&self) -> String {
-        if *self == Side::WHITE {
-            "White".to_string()
-        } else {
-            "Black".to_string()
-        }
-    }
 }
 
 impl Display for Side {
     fn fmt(&self, formatter: &mut Formatter<'_>) -> Result {
-        write!(formatter, "{}", self.to_string())
+        write!(
+            formatter,
+            "{}",
+            if *self == Side::WHITE {
+                "White".to_string()
+            } else {
+                "Black".to_string()
+            }
+        )
     }
 }
 
