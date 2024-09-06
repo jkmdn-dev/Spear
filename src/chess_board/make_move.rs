@@ -52,43 +52,43 @@ impl ChessBoard {
         let moved_piece = self.get_piece_on_square(from_square);
         match moved_piece {
             Piece::PAWN => self
-                .make_move_captrued_piece::<STM_WHITE, NSTM_WHITE, MOVE_FLAG, { PAWN }>(
+                .make_move_captured_piece::<STM_WHITE, NSTM_WHITE, MOVE_FLAG, { PAWN }>(
                     mv,
                     from_square,
                     to_square,
                 ),
             Piece::KNIGHT => self
-                .make_move_captrued_piece::<STM_WHITE, NSTM_WHITE, MOVE_FLAG, { KNIGHT }>(
+                .make_move_captured_piece::<STM_WHITE, NSTM_WHITE, MOVE_FLAG, { KNIGHT }>(
                     mv,
                     from_square,
                     to_square,
                 ),
             Piece::BISHOP => self
-                .make_move_captrued_piece::<STM_WHITE, NSTM_WHITE, MOVE_FLAG, { BISHOP }>(
+                .make_move_captured_piece::<STM_WHITE, NSTM_WHITE, MOVE_FLAG, { BISHOP }>(
                     mv,
                     from_square,
                     to_square,
                 ),
             Piece::ROOK => self
-                .make_move_captrued_piece::<STM_WHITE, NSTM_WHITE, MOVE_FLAG, { ROOK }>(
+                .make_move_captured_piece::<STM_WHITE, NSTM_WHITE, MOVE_FLAG, { ROOK }>(
                     mv,
                     from_square,
                     to_square,
                 ),
             Piece::QUEEN => self
-                .make_move_captrued_piece::<STM_WHITE, NSTM_WHITE, MOVE_FLAG, { QUEEN }>(
+                .make_move_captured_piece::<STM_WHITE, NSTM_WHITE, MOVE_FLAG, { QUEEN }>(
                     mv,
                     from_square,
                     to_square,
                 ),
             Piece::KING => self
-                .make_move_captrued_piece::<STM_WHITE, NSTM_WHITE, MOVE_FLAG, { KING }>(
+                .make_move_captured_piece::<STM_WHITE, NSTM_WHITE, MOVE_FLAG, { KING }>(
                     mv,
                     from_square,
                     to_square,
                 ),
             Piece::NONE => self
-                .make_move_captrued_piece::<STM_WHITE, NSTM_WHITE, MOVE_FLAG, { NONE }>(
+                .make_move_captured_piece::<STM_WHITE, NSTM_WHITE, MOVE_FLAG, { NONE }>(
                     mv,
                     from_square,
                     to_square,
@@ -98,7 +98,7 @@ impl ChessBoard {
     }
 
     #[inline]
-    fn make_move_captrued_piece<
+    fn make_move_captured_piece<
         const STM_WHITE: bool,
         const NSTM_WHITE: bool,
         const MOVE_FLAG: u16,
