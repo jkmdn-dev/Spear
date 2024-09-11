@@ -10,7 +10,7 @@ pub struct ZobristKey(u64);
 impl ZobristKey {
     pub const NULL: Self = Self(0);
 
-    fn get_raw(&self) -> u64 {
+    pub fn get_raw(&self) -> u64 {
         self.0
     }
 
