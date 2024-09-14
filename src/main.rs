@@ -1,9 +1,6 @@
 use spear::{Perft, FEN};
 
 fn main() {
-    let mut nodes = 0u128;
-    let mut duration = 0u128;
-
     let fens = [
         (FEN::start_position(), 7, 6, 3195901860),
         (FEN::kiwipete_position(), 6, 5, 8031647685),
@@ -35,6 +32,7 @@ fn main() {
         ),
     ];
 
+    println!("Bulk:");
     for _ in 0..2 {
         for (index, fen) in fens.clone().into_iter().enumerate() {
             let (result_nodes, result_duration) = Perft::perft::<true, false, false>(&fen.0, fen.1);
@@ -49,25 +47,21 @@ fn main() {
                     result_nodes * 1000 / result_duration
                 );
             }
-
-            nodes += result_nodes;
-            duration += result_duration;
         }
     }
 
-    println!("{}nps", nodes * 1000 / duration);
+    println!("\nNon-bulk:");
+    for fen in &fens {
+        let mut nodes = 0u128;
+        let mut duration = 0u128;
 
-    let mut nodes = 0u128;
-    let mut duration = 0u128;
-
-    for _ in 0..4 {
-        for fen in &fens {
+        for _ in 0..4 {
             let (result_nodes, result_duration) =
                 Perft::perft::<false, false, false>(&fen.0, fen.2);
             nodes += result_nodes;
             duration += result_duration;
         }
-    }
 
-    println!("{}nps", nodes * 1000 / duration);
+        println!("{}nps", nodes * 1000 / duration);
+    }
 }
