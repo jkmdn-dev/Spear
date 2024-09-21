@@ -79,7 +79,7 @@ lazy_static! {
         for square_index in 0..64 {
                 let square = Square::from_raw(square_index);
                 let attack_mask = mask_bishop_attacks(square);
-                let relevant_bit_count = attack_mask.pop_count_u8();
+                let relevant_bit_count = attack_mask.pop_count();
                 let mut index = 0;
                 while index < 1 << relevant_bit_count {
                     let occupancy = generate_occupancy(index, relevant_bit_count as usize, attack_mask);
