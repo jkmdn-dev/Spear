@@ -12,4 +12,5 @@ opt-level = 3
 
 [dependencies]
 colored = "*"
+lazy_static = "1.5.0"
 once_cell = "1.10.0"
